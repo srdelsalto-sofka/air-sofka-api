@@ -5,4 +5,5 @@ dependencies {
     implementation project (':model')
     implementation project (':mongo-repository')
     implementation project (':web')
+    implementation project (':rabbit-info-bus')
 }

@@ -39,6 +39,10 @@ public class DomainActionsHandler {
             long version = increaseVersion(event);
             event.setVersion(version);
         } catch (Exception ignored) {
+            System.out.println(ignored.getMessage());
+            if (!(ignored instanceof ClassCastException)) {
+                throw ignored;
+            }
         }
     }
 
