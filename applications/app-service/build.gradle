@@ -1,0 +1,9 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation project (':usecases')
+    implementation project (':model')
+    implementation project (':mongo-repository')
+    implementation project (':web')
+    implementation project (':rabbit-info-bus')
+}
