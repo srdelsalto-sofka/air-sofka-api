@@ -1,4 +1,4 @@
-rootProject.name = 'Air Sofka'
+rootProject.name = 'airsofka'
 
 include ':app-service'
 findProject(':app-service').projectDir = file('./applications/app-service')
