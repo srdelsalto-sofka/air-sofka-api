@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${confirmationTitle}">Airfare Booking Confirmation</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .flight-confirmation {
+            background-color: #0056b3;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .flight-confirmation-header h2 {
+            color: #fff;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .booking-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .booking-details,
+        .passenger-info {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .booking-details a {
+            color: #fff;
+        }
+
+        .airplane-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .flight-details {
+            margin-bottom: 20px;
+        }
+
+        .flight-details h2 {
+            color: #333;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .route-button {
+            background-color: #0056b3;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .flight-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .flight-info-grid div {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .seating-information {
+            margin-bottom: 20px;
+        }
+
+        .seating-info-header {
+            background-color: #0056b3;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .seating-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .seating-info-grid div {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cost-summary {
+            margin-bottom: 20px;
+        }
+
+        .cost-summary-header {
+            background-color: #0056b3;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .charge-breakdown {
+            margin-bottom: 10px;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total-amount {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            padding-top: 10px;
+        }
+
+        .key-notes {
+            background-color: #e1f0ff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .key-notes-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1 th:text="${confirmationTitle}">Air-Sofka Booking Confirmation</h1>
+    <div class="flight-confirmation">
+        <div class="flight-confirmation-header">
+            <h2>Booking Confirmation</h2>
+            <p th:text="'Booking Date: ' + ${bookingDate}"></p>
+        </div>
+
+        <div class="booking-info">
+            <div class="booking-details">
+                <p>Email: <a th:href="'mailto:' + ${email}" th:text="${email}"></a></p>
+                <p>Phone Number: <span th:text="${phoneNumber}"></span></p>
+            </div>
+            <div class="passenger-info">
+                <p>Passenger Name: <span th:text="${passengerName}"></span></p>
+                <p>Departure City: <span th:text="${departureCity}"></span></p>
+                <p>Arrival City: <span th:text="${arrivalCity}"></span></p>
+            </div>
+        </div>
+
+        <div class="flight-details">
+            <h2>Flight Details</h2>
+            <div class="flight-info-grid">
+                <div><strong>Airline</strong><br /><span th:text="${airline}"></span></div>
+                <div><strong>Departure Date</strong><br /><span th:text="${departureDate}"></span></div>
+                <div><strong>Arrival Date</strong><br /><span th:text="${arrivalDate}"></span></div>
+                <div><strong>Flight Number</strong><br /><span th:text="${flightNumber}"></span></div>
+            </div>
+        </div>
+
+        <div class="seating-information">
+            <div class="seating-info-header">
+                <h2>Seating Information</h2>
+            </div>
+            <div class="seating-info-grid">
+                <div><strong>Flight Class</strong><br /><span th:text="${seats[0].flightClass}"></span></div>
+                <div><strong>Seat Number</strong><br /><span th:text="${seats[0].seatNumber}"></span></div>
+                <div><strong>Passenger Name</strong><br /><span th:text="${seats[0].passengerName}"></span></div>
+            </div>
+            <!-- Add more seating info if needed -->
+        </div>
+
+        <div class="cost-summary">
+            <div class="cost-summary-header">
+                <h2>Cost Summary</h2>
+            </div>
+            <div class="charge-breakdown">
+                <div class="cost-item">
+                    <span>Ticket Price</span>
+                    <span th:text="${ticketPrice}"></span>
+                </div>
+                <div class="cost-item">
+                    <span>Airport Tax</span>
+                    <span th:text="${airportTax}"></span>
+                </div>
+                <div class="cost-item">
+                    <span>Additional Charges</span>
+                    <span th:text="${additionalCharges}"></span>
+                </div>
+                <div class="cost-item">
+                    <span>Fuel & Insurance</span>
+                    <span th:text="${fuelInsurance}"></span>
+                </div>
+                <div class="cost-item">
+                    <span>Booking Fee</span>
+                    <span th:text="${bookingFee}"></span>
+                </div>
+                <div class="total-amount">
+                    <span>Total Amount</span>
+                    <span th:text="${totalAmount}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-notes">
+            <div class="key-notes-header">Key Notes:</div>
+            <p th:text="${keyNotes}"></p>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

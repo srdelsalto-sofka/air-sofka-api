@@ -23,3 +23,15 @@ findProject(':serializer').projectDir = file('./infrastructure/helpers/serialize
 
 include ':rabbit-info-bus'
 findProject(':rabbit-info-bus').projectDir = file('./infrastructure/driven-adapters/rabbit-info-bus')
+
+include ':rabbit-listener-bus'
+findProject(':rabbit-listener-bus').projectDir = file('./infrastructure/entry-points/rabbit-listener-bus')
+
+include ':shared'
+findProject(':shared').projectDir = file('./shared')
+
+include ':app-logs'
+findProject(':app-logs').projectDir = file('./applications/app-logs')
+
+include ':email'
+findProject(':email').projectDir = file('./infrastructure/driven-adapters/email')
