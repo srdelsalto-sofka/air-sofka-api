@@ -57,6 +57,40 @@ public class RabbitConfig {
     }
 
     @Bean
+    public TopicExchange userCreatedExchange() {
+        return new TopicExchange(envProperties.getUserCreatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue userCreatedQueue() {
+        return new Queue(envProperties.getUserCreatedQueue(), true);
+    }
+
+    @Bean
+    public Binding userCreatedBinding() {
+        return BindingBuilder.bind(userCreatedQueue())
+                .to(userCreatedExchange())
+                .with(envProperties.getUserCreatedRoutingKey());
+    }
+
+    @Bean
+    public TopicExchange planeCreatedExchange() {
+        return new TopicExchange(envProperties.getPlaneCreatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue planeCreatedQueue() {
+        return new Queue(envProperties.getPlaneCreatedQueue(), true);
+    }
+
+    @Bean
+    public Binding planeCreatedBinding() {
+        return BindingBuilder.bind(planeCreatedQueue())
+                .to(planeCreatedExchange())
+                .with(envProperties.getPlaneCreatedRoutingKey());
+    }
+
+    @Bean
     public TopicExchange emailExchange() {
         return new TopicExchange(envProperties.getEmailExchange(), true, false);
     }
@@ -83,6 +117,14 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(flightCreatedExchange());
             amqpAdmin.declareQueue(flightCreatedQueue());
             amqpAdmin.declareBinding(flightCreatedBinding());
+
+            amqpAdmin.declareExchange(userCreatedExchange());
+            amqpAdmin.declareQueue(userCreatedQueue());
+            amqpAdmin.declareBinding(userCreatedBinding());
+
+            amqpAdmin.declareExchange(planeCreatedExchange());
+            amqpAdmin.declareQueue(planeCreatedQueue());
+            amqpAdmin.declareBinding(planeCreatedBinding());
 
             amqpAdmin.declareExchange(emailExchange());
             amqpAdmin.declareQueue(emailQueue());
