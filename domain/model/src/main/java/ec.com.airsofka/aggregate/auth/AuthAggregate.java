@@ -6,6 +6,7 @@ import ec.com.airsofka.aggregate.auth.values.AuthAggregateId;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.utils.AggregateRoot;
 import ec.com.airsofka.user.User;
+import ec.com.airsofka.user.values.UserId;
 import ec.com.airsofka.user.values.objects.DocumentType;
 import ec.com.airsofka.user.values.objects.Role;
 
@@ -25,19 +26,19 @@ public class AuthAggregate extends AggregateRoot<AuthAggregateId> {
         setSubscription(new UserHandler(this));
     }
 
-    public void createUser(String userId, LocalDateTime birthDate, String documentNumber, DocumentType documentType,
+    public void createUser(LocalDateTime birthDate, String documentNumber, DocumentType documentType,
                            String email, String firstLastName, Boolean frequent, String lastLastName, String name,
                            Integer numberOfFlights, String password, String phone, String prefix, Role role, String title) {
 
-        addEvent(new UserCreated(userId, birthDate, documentNumber, documentType, email, firstLastName, frequent,
+        addEvent(new UserCreated(new UserId().getValue(), birthDate, documentNumber, documentType, email, firstLastName, frequent,
                 lastLastName, name, numberOfFlights, password, phone, prefix, role, title));
     }
 
-    public void updateUser(String userId, LocalDateTime birthDate, String documentNumber, DocumentType documentType,
+    public void updateUser(LocalDateTime birthDate, String documentNumber, DocumentType documentType,
                            String email, String firstLastName, Boolean frequent, String lastLastName, String name,
                            Integer numberOfFlights, String password, String phone, String prefix, Role role, String title) {
 
-        addEvent(new UserUpdated(userId, birthDate, documentNumber, documentType, email,
+        addEvent(new UserUpdated(new UserId().getValue(), birthDate, documentNumber, documentType, email,
                 firstLastName, frequent, lastLastName, name, numberOfFlights, password, phone,
                 prefix, role, title));
     }

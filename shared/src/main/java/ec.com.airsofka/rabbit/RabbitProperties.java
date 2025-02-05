@@ -19,6 +19,16 @@ public class RabbitProperties {
     private String  bookingRoutingKey;
 
 
+    @Value("${user.exchange.name}")
+    private String  userExchange;
+
+    @Value("${user.queue.name}")
+    private String  userQueue;
+
+    @Value("${user.routing.key}")
+    private String  userRoutingKey;
+
+
     public String getBookingExchange() {
         return bookingExchange;
     }
@@ -31,7 +41,20 @@ public class RabbitProperties {
         return bookingRoutingKey;
     }
 
+    public String getUserCreatedExchange() {
+        return userExchange;
+    }
+
+    public String getUserCreatedQueue() {
+        return userQueue;
+    }
+
+    public String getUserCreatedRoutingKey() {
+        return userRoutingKey;
+    }
+
     public String[] getAllQueues(){
-        return new String[] {getBookingQueue()};
+        return new String[] {getBookingQueue(),
+        getUserCreatedQueue(),};
     }
 }
