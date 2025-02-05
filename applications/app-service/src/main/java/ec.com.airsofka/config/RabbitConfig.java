@@ -27,7 +27,6 @@ public class RabbitConfig {
         return new TopicExchange(envProperties.getBookingExchange(), true, false);
     }
 
-
     @Bean
     public Queue bookingQueue() {
         return new Queue(envProperties.getBookingQueue(), true);
@@ -40,15 +39,33 @@ public class RabbitConfig {
                 .with(envProperties.getBookingRoutingKey());
     }
 
+    @Bean
+    public TopicExchange flightCreatedExchange() {
+        return new TopicExchange(envProperties.getFlightCreatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue flightCreatedQueue() {
+        return new Queue(envProperties.getFlightCreatedQueue(), true);
+    }
+
+    @Bean
+    public Binding flightCreatedBinding() {
+        return BindingBuilder.bind(flightCreatedQueue())
+                .to(flightCreatedExchange())
+                .with(envProperties.getFlightCreatedRoutingKey());
+    }
 
     @Bean
     public ApplicationListener<ApplicationReadyEvent> initializeBeans(AmqpAdmin amqpAdmin) {
         return event -> {
-
-
             amqpAdmin.declareExchange(bookingExchange());
             amqpAdmin.declareQueue(bookingQueue());
             amqpAdmin.declareBinding(bookingBinding());
+
+            amqpAdmin.declareExchange(flightCreatedExchange());
+            amqpAdmin.declareQueue(flightCreatedQueue());
+            amqpAdmin.declareBinding(flightCreatedBinding());
         };
     }
 
