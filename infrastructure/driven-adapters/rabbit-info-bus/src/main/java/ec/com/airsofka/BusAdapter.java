@@ -33,4 +33,14 @@ public class BusAdapter implements BusEvent {
         );
 
     }
+
+    public void sendEventUserCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getUserCreatedExchange(),envProperties.getUserCreatedRoutingKey(),
+                        domainEvent
+                )
+        );
+    }
+
 }

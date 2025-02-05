@@ -1,11 +1,14 @@
 package ec.com.airsofka;
 
+import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
+import ec.com.airsofka.flight.queries.usecases.UserSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.dto.FlightDTO;
+import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.rabbit.RabbitProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -21,11 +24,13 @@ public class BusListener implements BusEventListener {
     private final RabbitProperties rabbitProperties;
     private final SendEmailUseCase sendEmailUseCase;
     private final FlightSavedViewUseCase flightSavedViewUseCase;
-
-    public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase) {
+    private final UserSavedViewUseCase userSavedViewUseCase;
+    public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase,
+                       UserSavedViewUseCase  userSavedViewUseCase) {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
         this.flightSavedViewUseCase = flightSavedViewUseCase;
+        this.userSavedViewUseCase = userSavedViewUseCase;
     }
 
     @Override
@@ -82,5 +87,30 @@ public class BusListener implements BusEventListener {
         );
 
         flightSavedViewUseCase.accept(flightDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getUserCreatedQueue()}")
+    public void receiveUserCreated(DomainEvent userCreated) {
+        UserCreated user = (UserCreated) userCreated;
+
+        UserDTO userDTO = new UserDTO(
+                user.getUserId(),
+                user.getBirthDate(),
+                user.getDocumentNumber(),
+                user.getDocumentType(),
+                user.getEmail(),
+                user.getFirstLastName(),
+                user.getFrequent(),
+                user.getLastLastName(),
+                user.getName(),
+                user.getNumberOfFlights(),
+                user.getPassword(),
+                user.getPhone(),
+                user.getPrefix(),
+                user.getRole(),
+                user.getTitle()
+        );
+        userSavedViewUseCase.accept(userDTO);
     }
 }
