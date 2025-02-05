@@ -22,6 +22,7 @@ public class FlightRouter {
     @Bean
     public RouterFunction<ServerResponse> flightRoutes() {
         return RouterFunctions
-                .route(RequestPredicates.POST("/flights").and(accept(MediaType.APPLICATION_JSON)), flightHandler::create);
+                .route(RequestPredicates.POST("/flights").and(accept(MediaType.APPLICATION_JSON)), flightHandler::create)
+                .andRoute(RequestPredicates.GET("/flights"), flightHandler::getAll);
     }
 }
