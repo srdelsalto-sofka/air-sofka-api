@@ -1,8 +1,11 @@
 package ec.com.airsofka;
 
+import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
+import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
+import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.rabbit.RabbitProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -14,13 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class BusListener  implements BusEventListener {
-    private  final RabbitProperties rabbitProperties;
+public class BusListener implements BusEventListener {
+    private final RabbitProperties rabbitProperties;
     private final SendEmailUseCase sendEmailUseCase;
+    private final FlightSavedViewUseCase flightSavedViewUseCase;
 
-    public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase) {
+    public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase) {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
+        this.flightSavedViewUseCase = flightSavedViewUseCase;
     }
 
     @Override
@@ -57,7 +62,25 @@ public class BusListener  implements BusEventListener {
         ));
 
         sendEmailUseCase.execute(new SendEmailCommand("qtandres17@gmail.com", variables))
-                .doOnSuccess(value ->System.out.println("Send email result: " + value))
+                .doOnSuccess(value -> System.out.println("Send email result: " + value))
                 .subscribe();
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getFlightCreatedQueue()}")
+    public void receiveFlightCreated(DomainEvent flightCreated) {
+        FlightCreated flight = (FlightCreated) flightCreated;
+
+        FlightDTO flightDTO = new FlightDTO(
+                flight.getId(),
+                flight.getOrigin(),
+                flight.getDestination(),
+                flight.getDeparture(),
+                flight.getArrival(),
+                flight.getPrice(),
+                flight.getIdPlane()
+        );
+
+        flightSavedViewUseCase.accept(flightDTO);
     }
 }
