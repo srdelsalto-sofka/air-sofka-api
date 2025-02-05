@@ -1,10 +1,9 @@
 package ec.com.airsofka.handler;
 
-import ec.com.airsofka.dto.FlightRequestDTO;
-import ec.com.airsofka.flight.commands.usecases.CreateFlightUseCase;
-import ec.com.airsofka.flight.queries.usecases.GetAllFlightViewUseCase;
 import ec.com.airsofka.generics.utils.QueryResponse;
-import ec.com.airsofka.mapper.FlightMapper;
+import ec.com.airsofka.plane.commands.CreatePlaneCommand;
+import ec.com.airsofka.plane.commands.usecases.CreatePlaneUseCase;
+import ec.com.airsofka.plane.queries.usecases.GetAllPlaneVIewUseCase;
 import ec.com.airsofka.validator.RequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,38 +13,36 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 @Component
-public class FlightHandler {
+public class PlaneHandler {
     private final RequestValidator requestValidator;
-    private final CreateFlightUseCase createFlightUseCase;
-    private final GetAllFlightViewUseCase getAllFlightViewUseCase;
+    private final CreatePlaneUseCase createPlaneUseCase;
+    private final GetAllPlaneVIewUseCase getAllPlaneVIewUseCase;
 
-    public FlightHandler(RequestValidator requestValidator, CreateFlightUseCase createFlightUseCase, GetAllFlightViewUseCase getAllFlightViewUseCase) {
+    public PlaneHandler(RequestValidator requestValidator, CreatePlaneUseCase createPlaneUseCase, GetAllPlaneVIewUseCase getAllPlaneVIewUseCase) {
         this.requestValidator = requestValidator;
-        this.createFlightUseCase = createFlightUseCase;
-        this.getAllFlightViewUseCase = getAllFlightViewUseCase;
+        this.createPlaneUseCase = createPlaneUseCase;
+        this.getAllPlaneVIewUseCase = getAllPlaneVIewUseCase;
     }
 
     public Mono<ServerResponse> create(ServerRequest request) {
-        return request.bodyToMono(FlightRequestDTO.class)
-                .doOnNext(requestValidator::validate)
-                .map(FlightMapper::toCommand)
-                .flatMap(createFlightUseCase::execute)
-                .flatMap(flightResponse ->
+        return request.bodyToMono(CreatePlaneCommand.class)
+                .flatMap(createPlaneUseCase::execute)
+                .flatMap(planeResponse ->
                         ServerResponse
                                 .status(HttpStatus.CREATED)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(flightResponse)
+                                .bodyValue(planeResponse)
                 );
     }
 
     public Mono<ServerResponse> getAll(ServerRequest request) {
-        return getAllFlightViewUseCase.get()
+        return getAllPlaneVIewUseCase.get()
                 .map(QueryResponse::getMultipleResults)
-                .flatMap(flightResponses ->
+                .flatMap(planeResponses ->
                         ServerResponse
                                 .ok()
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(flightResponses)
+                                .bodyValue(planeResponses)
                 );
     }
 }

@@ -73,6 +73,22 @@ public class RabbitConfig {
                 .with(envProperties.getUserCreatedRoutingKey());
     }
 
+    @Bean
+    public TopicExchange planeCreatedExchange() {
+        return new TopicExchange(envProperties.getPlaneCreatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue planeCreatedQueue() {
+        return new Queue(envProperties.getPlaneCreatedQueue(), true);
+    }
+
+    @Bean
+    public Binding planeCreatedBinding() {
+        return BindingBuilder.bind(planeCreatedQueue())
+                .to(planeCreatedExchange())
+                .with(envProperties.getPlaneCreatedRoutingKey());
+    }
 
     @Bean
     public ApplicationListener<ApplicationReadyEvent> initializeBeans(AmqpAdmin amqpAdmin) {
@@ -88,6 +104,10 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(userCreatedExchange());
             amqpAdmin.declareQueue(userCreatedQueue());
             amqpAdmin.declareBinding(userCreatedBinding());
+
+            amqpAdmin.declareExchange(planeCreatedExchange());
+            amqpAdmin.declareQueue(planeCreatedQueue());
+            amqpAdmin.declareBinding(planeCreatedBinding());
         };
     }
 

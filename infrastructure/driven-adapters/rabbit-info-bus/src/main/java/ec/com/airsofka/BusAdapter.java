@@ -43,4 +43,14 @@ public class BusAdapter implements BusEvent {
         );
     }
 
+    @Override
+    public void sendEventPlaneCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent-> rabbitTemplate.convertAndSend(
+                        envProperties.getPlaneCreatedExchange(),envProperties.getPlaneCreatedRoutingKey(),
+                        domainEvent
+                )
+        );
+    }
+
 }
