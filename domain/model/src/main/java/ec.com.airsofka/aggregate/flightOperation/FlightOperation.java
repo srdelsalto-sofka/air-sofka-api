@@ -1,18 +1,30 @@
 package ec.com.airsofka.aggregate.flightOperation;
 
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
+import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
+import ec.com.airsofka.aggregate.flightOperation.events.SeatListId;
+import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
 import ec.com.airsofka.aggregate.flightOperation.values.FlightOperationId;
 import ec.com.airsofka.flight.Flight;
 import ec.com.airsofka.flight.values.FlightId;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.utils.AggregateRoot;
+import ec.com.airsofka.seat.Seat;
+import ec.com.airsofka.seat.SeatClass;
+import ec.com.airsofka.seat.SeatCreatedDTO;
+import ec.com.airsofka.seat.SeatStatus;
+import ec.com.airsofka.seat.values.SeatId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class FlightOperation extends AggregateRoot<FlightOperationId> {
     private Flight flight;
+    private List<Seat> seatList;
+    private Seat seat;
 
     public FlightOperation() {
         super(new FlightOperationId());
@@ -34,6 +46,20 @@ public class FlightOperation extends AggregateRoot<FlightOperationId> {
 
     public void createFlight(String origin, String destination, LocalDateTime departure, LocalDateTime arrival, Double price, String idPlane) {
         addEvent(new FlightCreated(new FlightId().getValue(), origin, destination, departure, arrival, price, idPlane)).apply();
+    }
+
+    public List<Seat> getSeatList(){return seatList;}
+
+    public void setSeatList(List<Seat> seatList){this.seatList = seatList;}
+
+    public void createSeatList(List<SeatCreatedDTO> seatList){
+        addEvent(new SeatListCreated(new SeatListId().getValue(), seatList)).apply();
+    }
+
+    public Seat getSeat(){return seat;}
+    public void setSeat(Seat seat){this.seat = seat;}
+    public void createSeatReservation(String userId, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
+        addEvent(new SeatReserved(new SeatId().getValue(), userId, number, row, column, type, status, price, idFlight)).apply();
     }
 
     public static Mono<FlightOperation> from(final String id, Flux<DomainEvent> events) {
