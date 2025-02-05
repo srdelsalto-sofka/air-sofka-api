@@ -103,6 +103,7 @@ public class EventEntity {
     }
 
     public DomainEvent deserializeEvent(JSONMap eventSerializer, String aggregate) {
+        System.out.println("serializwe"+aggregate +eventSerializer.toString());
         try {
 
             String className = Arrays.stream(this.getEventType().toLowerCase().split("_"))
@@ -110,7 +111,7 @@ public class EventEntity {
                     .collect(Collectors.joining());
 
             return (DomainEvent) eventSerializer
-                    .readFromJson(this.getEventData(), Class.forName("ec.com.sofka.aggregate." + aggregate + ".events." + className));
+                    .readFromJson(this.getEventData(), Class.forName("ec.com.airsofka.aggregate." + aggregate + ".events." + className));
         } catch (ClassNotFoundException e) {
             return null;
         }

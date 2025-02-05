@@ -5,5 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface IUserRepository {
     Mono<UserDTO> save(UserDTO usertDTO);
+    Mono<UserDTO> findById(String id);
+    Mono<UserDTO> update(UserDTO usertDTO);
 
 }

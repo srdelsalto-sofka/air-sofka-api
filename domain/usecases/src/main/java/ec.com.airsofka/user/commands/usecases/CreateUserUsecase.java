@@ -1,6 +1,6 @@
 package ec.com.airsofka.user.commands.usecases;
 
-import ec.com.airsofka.aggregate.auth.AuthAggregate;
+import ec.com.airsofka.aggregate.auth.Auth;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
@@ -25,7 +25,7 @@ public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, Use
     @Override
     public Mono<UserResponse> execute(CreateUserCommand cmd) {
 
-        AuthAggregate authAggregate = new AuthAggregate();
+        Auth authAggregate = new Auth();
 
         authAggregate.createUser(cmd.getBirthDate(),
                 cmd.getDocumentNumber(),

@@ -1,4 +1,4 @@
-package ec.com.airsofka.flight.queries.usecases;
+package ec.com.airsofka.user.queries.usecases;
 
 import ec.com.airsofka.gateway.IUserRepository;
 import ec.com.airsofka.gateway.dto.UserDTO;

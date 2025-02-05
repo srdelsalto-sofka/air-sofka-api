@@ -20,7 +20,7 @@ public class Frequent implements IValueObject<Boolean> {
     }
 
     private Boolean validate(final Boolean value) {
-        if (value == null || !value) {
+        if (value == null) {
             throw new IllegalArgumentException("The frequent value must be true and cannot be null");
         }
         return value;

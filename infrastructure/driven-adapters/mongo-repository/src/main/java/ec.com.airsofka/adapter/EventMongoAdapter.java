@@ -8,7 +8,11 @@ import ec.com.airsofka.generics.domain.DomainEvent;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Comparator;
+import java.util.NoSuchElementException;
 
 @Repository
 public class EventMongoAdapter implements IEventStore {
@@ -37,4 +41,40 @@ public class EventMongoAdapter implements IEventStore {
         return repository.save(e)
                 .thenReturn(event);
     }
+
+    @Override
+    public Flux<DomainEvent> findAggregate(String aggregateId, String aggregate) {
+        return repository.findAllByAggregateId(aggregateId)
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper, aggregate))
+                .sort(Comparator.comparing(DomainEvent::getVersion)
+                        .thenComparing(DomainEvent::getWhen));
+    }
+
+    @Override
+    public Flux<DomainEvent> findAllAggregate(String aggregate) {
+        return repository.findAllByAggregateRootName(aggregate)
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper, aggregate))
+                .sort(Comparator.comparing(DomainEvent::getVersion)
+                        .thenComparing(DomainEvent::getWhen));
+    }
+
+    @Override
+    public Flux<DomainEvent> findAllAggregateByEvent(String aggregate, String eventType) {
+        System.out.println("entra0 " + aggregate + eventType);
+        return repository.findAllByAggregateRootNameAndEventType(aggregate, eventType)
+                .switchIfEmpty(Mono.error(new NoSuchElementException("No se encontraron eventos para los parámetros dados")))
+                .doOnError(error -> {
+                    System.out.println("error " + error.getMessage());
+                })
+                .doOnNext(event -> System.out.println("Event AggregateId: " + event.getAggregateId()))
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper, aggregate))
+                .sort(Comparator.comparing(DomainEvent::getVersion)
+                        .thenComparing(DomainEvent::getWhen))
+                .onErrorResume(error -> {
+                    // Aquí manejas cualquier error globalmente
+                    System.err.println("Error durante el proceso: " + error.getMessage());
+                    return Mono.error(new RuntimeException("Hubo un error procesando los eventos"));
+                });
+    }
+
 }

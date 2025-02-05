@@ -26,4 +26,16 @@ public class UserMongoAdapter  implements IUserRepository {
         UserEntity userEntity = UserMapperEntity.toEntity(usertDTO);
         return userMongoRepository.save(userEntity).map(UserMapperEntity::fromEntity);
     }
+
+    @Override
+    public Mono<UserDTO> update(UserDTO usertDTO) {
+        UserEntity userEntity = UserMapperEntity.toEntity(usertDTO);
+        return userMongoRepository.save(userEntity).map(UserMapperEntity::fromEntity);
+    }
+
+
+    @Override
+    public Mono<UserDTO> findById(String id) {
+        return userMongoRepository.findById(id).map(UserMapperEntity::fromEntity);
+    }
 }

@@ -73,6 +73,23 @@ public class RabbitConfig {
                 .with(envProperties.getUserCreatedRoutingKey());
     }
 
+    @Bean
+    public TopicExchange userUpdatedExchange() {
+        return new TopicExchange(envProperties.getUserUpdatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue userUpdatedQueue() {
+        return new Queue(envProperties.getUserUpdatedQueue(), true);
+    }
+
+    @Bean
+    public Binding userUpdatedBinding() {
+        return BindingBuilder.bind(userUpdatedQueue())
+                .to(userUpdatedExchange())
+                .with(envProperties.getUserUpdatedRoutingKey());
+    }
+
 
     @Bean
     public ApplicationListener<ApplicationReadyEvent> initializeBeans(AmqpAdmin amqpAdmin) {
@@ -88,6 +105,11 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(userCreatedExchange());
             amqpAdmin.declareQueue(userCreatedQueue());
             amqpAdmin.declareBinding(userCreatedBinding());
+
+
+            amqpAdmin.declareExchange(userUpdatedExchange());
+            amqpAdmin.declareQueue(userUpdatedQueue());
+            amqpAdmin.declareBinding(userUpdatedBinding());
         };
     }
 

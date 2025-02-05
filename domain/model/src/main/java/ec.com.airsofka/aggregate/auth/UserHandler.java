@@ -9,7 +9,7 @@ import ec.com.airsofka.user.values.objects.*;
 
 public class UserHandler extends DomainActionsContainer {
 
-    public UserHandler(AuthAggregate authAggregate) {
+    public UserHandler(Auth authAggregate) {
         addDomainActions((UserCreated event) -> {
             User user = new User(
                     UserId.of(event.getUserId()),
