@@ -33,4 +33,13 @@ public class BusAdapter implements BusEvent {
         );
 
     }
+
+    @Override
+    public void sendEmailNotification(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getEmailExchange(), envProperties.getEmailRoutingKey(),
+                        domainEvent)
+        );
+    }
 }

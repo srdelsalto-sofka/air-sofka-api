@@ -32,6 +32,6 @@ public class CreateBookingUseCase  implements IUseCaseExecute<CreateBookingComma
                 .forEach(busEvent::sendEventBookingCreated);
 
         reservation.markEventsAsCommitted();
-        return Mono.just(new BookingResponse("TESTED"));
+        return Mono.just(new BookingResponse("TESTED --> You must agregate your changes"));
     }
 }

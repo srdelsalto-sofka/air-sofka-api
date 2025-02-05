@@ -57,6 +57,23 @@ public class RabbitConfig {
     }
 
     @Bean
+    public TopicExchange emailExchange() {
+        return new TopicExchange(envProperties.getEmailExchange(), true, false);
+    }
+
+    @Bean
+    public Queue emailQueue() {
+        return new Queue(envProperties.getEmailQueue(), true);
+    }
+
+    @Bean
+    public Binding emailBinding() {
+        return BindingBuilder.bind(emailQueue())
+                .to(emailExchange())
+                .with(envProperties.getEmailRoutingKey());
+    }
+
+    @Bean
     public ApplicationListener<ApplicationReadyEvent> initializeBeans(AmqpAdmin amqpAdmin) {
         return event -> {
             amqpAdmin.declareExchange(bookingExchange());
@@ -66,6 +83,10 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(flightCreatedExchange());
             amqpAdmin.declareQueue(flightCreatedQueue());
             amqpAdmin.declareBinding(flightCreatedBinding());
+
+            amqpAdmin.declareExchange(emailExchange());
+            amqpAdmin.declareQueue(emailQueue());
+            amqpAdmin.declareBinding(emailBinding());
         };
     }
 
