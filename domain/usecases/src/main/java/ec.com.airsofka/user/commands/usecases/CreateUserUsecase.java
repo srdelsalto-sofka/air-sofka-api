@@ -7,9 +7,9 @@ import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.user.User;
 import ec.com.airsofka.user.commands.CreateUserCommand;
 import ec.com.airsofka.user.queries.responses.UserResponse;
-import org.reactivestreams.Publisher;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
+@Service
 public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, UserResponse>{
 
     private final IEventStore eventRepository;
@@ -23,7 +23,7 @@ public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, Use
 
 
     @Override
-    public Publisher<UserResponse> execute(CreateUserCommand cmd) {
+    public Mono<UserResponse> execute(CreateUserCommand cmd) {
 
         AuthAggregate authAggregate = new AuthAggregate();
 

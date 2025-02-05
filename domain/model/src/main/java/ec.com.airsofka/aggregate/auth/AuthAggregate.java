@@ -31,7 +31,7 @@ public class AuthAggregate extends AggregateRoot<AuthAggregateId> {
                            Integer numberOfFlights, String password, String phone, String prefix, Role role, String title) {
 
         addEvent(new UserCreated(new UserId().getValue(), birthDate, documentNumber, documentType, email, firstLastName, frequent,
-                lastLastName, name, numberOfFlights, password, phone, prefix, role, title));
+                lastLastName, name, numberOfFlights, password, phone, prefix, role, title)).apply();
     }
 
     public void updateUser(LocalDateTime birthDate, String documentNumber, DocumentType documentType,
@@ -40,7 +40,7 @@ public class AuthAggregate extends AggregateRoot<AuthAggregateId> {
 
         addEvent(new UserUpdated(new UserId().getValue(), birthDate, documentNumber, documentType, email,
                 firstLastName, frequent, lastLastName, name, numberOfFlights, password, phone,
-                prefix, role, title));
+                prefix, role, title)).apply();
     }
 
 

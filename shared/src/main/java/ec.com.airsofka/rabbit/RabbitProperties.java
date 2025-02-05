@@ -27,13 +27,13 @@ public class RabbitProperties {
     @Value("${flightCreated.routing.key}")
     private String flightCreatedRoutingKey;
 
-    @Value("${user.exchange.name}")
+    @Value("${userCreated.exchange.name}")
     private String  userExchange;
 
-    @Value("${user.queue.name}")
+    @Value("${userCreated.queue.name}")
     private String  userQueue;
 
-    @Value("${user.routing.key}")
+    @Value("${userCreated.routing.key}")
     private String  userRoutingKey;
 
 
