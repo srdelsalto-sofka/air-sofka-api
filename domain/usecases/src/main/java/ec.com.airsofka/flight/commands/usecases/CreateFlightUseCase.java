@@ -31,9 +31,9 @@ public class CreateFlightUseCase implements IUseCaseExecute<CreateFlightCommand,
                 .map(repository::save)
                 .forEach(busEvent::sendEventFlightCreated);
 
-        Flight newFlight = flightOperation.getFlight();
-
         flightOperation.markEventsAsCommitted();
+
+        Flight newFlight = flightOperation.getFlight();
         return Mono.just(new FlightResponse(
                         newFlight.getId().getValue(),
                         newFlight.getOrigin().getValue(),
