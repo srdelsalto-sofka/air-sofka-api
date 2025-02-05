@@ -16,6 +16,7 @@ import ec.com.airsofka.seat.values.objects.Number;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class FlightOperationHandler extends DomainActionsContainer {
     public FlightOperationHandler(FlightOperation flightOperation) {
@@ -47,18 +48,24 @@ public class FlightOperationHandler extends DomainActionsContainer {
         });
 
         addDomainActions((SeatReserved event) -> {
-            Seat seat = new Seat(
-                    SeatId.of(event.getId()),
-                    Number.of(event.getNumber()),
-                    Row.of(event.getRow()),
-                    Column.of(event.getColumn()),
-                    Type.of(event.getType()),
-                    Status.of(event.getStatus()),
-                   ec.com.airsofka.seat.values.objects.Price.of(event.getPrice()),
-                    FlightId.of(event.getIdFlight())
-            );
+            List<Seat> updatedSeats = flightOperation.getSeatList().stream()
+                    .map(seat -> seat.getId().getValue().equals(event.getSeatId())
+                                    ? new Seat(
+                                    SeatId.of(event.getSeatId()),
+                                    Number.of(event.getNumber()),
+                                    Row.of(event.getRow()),
+                                    Column.of(event.getColumn()),
+                                    Type.of(event.getType()),
+                                    Status.of(event.getStatus()),
+                                    ec.com.airsofka.seat.values.objects.Price.of(event.getPrice()),
+                                    FlightId.of(event.getIdFlight())
+                            )
+                                    : seat
+                    )
+                    .toList();
 
-            flightOperation.setSeat(seat);
+            flightOperation.setSeatList(updatedSeats);
         });
     }
 }
+
