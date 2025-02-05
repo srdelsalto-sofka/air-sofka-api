@@ -2,14 +2,17 @@ package ec.com.airsofka;
 
 import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
+import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
 import ec.com.airsofka.flight.queries.usecases.UserSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.dto.FlightDTO;
+import ec.com.airsofka.gateway.dto.PlaneDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
+import ec.com.airsofka.plane.queries.usecases.PlaneSavedViewUseCase;
 import ec.com.airsofka.rabbit.RabbitProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
@@ -25,12 +28,15 @@ public class BusListener implements BusEventListener {
     private final SendEmailUseCase sendEmailUseCase;
     private final FlightSavedViewUseCase flightSavedViewUseCase;
     private final UserSavedViewUseCase userSavedViewUseCase;
+    private final PlaneSavedViewUseCase planeSavedViewUseCase;
+
     public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase,
-                       UserSavedViewUseCase  userSavedViewUseCase) {
+                       UserSavedViewUseCase userSavedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase) {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
         this.flightSavedViewUseCase = flightSavedViewUseCase;
         this.userSavedViewUseCase = userSavedViewUseCase;
+        this.planeSavedViewUseCase = planeSavedViewUseCase;
     }
 
     @Override
@@ -112,5 +118,19 @@ public class BusListener implements BusEventListener {
                 user.getTitle()
         );
         userSavedViewUseCase.accept(userDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getPlaneCreatedQueue()}")
+    public void receivePlaneCreated(DomainEvent planeCreated) {
+        PlaneCreated plane = (PlaneCreated) planeCreated;
+
+        PlaneDTO planeDTO = new PlaneDTO(
+                plane.getId(),
+                plane.getState(),
+                plane.getModel()
+        );
+
+        planeSavedViewUseCase.accept(planeDTO);
     }
 }

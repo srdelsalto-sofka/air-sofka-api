@@ -7,5 +7,5 @@ public interface BusEvent {
     void sendEventFlightCreated(Mono<DomainEvent> event);
     void sendEventBookingCreated(Mono<DomainEvent> event);
     void sendEventUserCreated(Mono<DomainEvent> event);
-
+    void sendEventPlaneCreated(Mono<DomainEvent> event);
 }

@@ -1,20 +1,15 @@
 package ec.com.airsofka.flight.commands.usecases;
 
 import ec.com.airsofka.aggregate.flightOperation.FlightOperation;
-import ec.com.airsofka.seat.SeatCreatedDTO;
 import ec.com.airsofka.flight.Flight;
 import ec.com.airsofka.flight.commands.CreateFlightCommand;
 import ec.com.airsofka.flight.queries.responses.FlightResponse;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
-import ec.com.airsofka.seat.SeatClass;
-import ec.com.airsofka.seat.SeatStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 public class CreateFlightUseCase implements IUseCaseExecute<CreateFlightCommand, FlightResponse> {
