@@ -10,7 +10,7 @@ import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
-import ec.com.airsofka.rabbit.RabbitProperties;
+import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
 import ec.com.airsofka.user.queries.usecases.UserSavedViewUseCase;
 import ec.com.airsofka.user.queries.usecases.UserUpdatedViewUseCase;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
