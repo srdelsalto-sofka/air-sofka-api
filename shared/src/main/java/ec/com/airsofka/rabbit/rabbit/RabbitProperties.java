@@ -174,7 +174,6 @@ public class RabbitProperties {
 
     public String[] getAllQueues() {
         return new String[]{getBookingQueue(), getFlightCreatedQueue(), getUserCreatedQueue(), getPlaneCreatedQueue(), getUserUpdatedQueue(),
-        getSeatReservedQueue()};
-        return new String[]{getBookingQueue(), getFlightCreatedQueue(), getUserCreatedQueue(), getPlaneCreatedQueue(), getUserUpdatedQueue(), getMaintenanceQueue()};
+        getSeatReservedQueue(), getMaintenanceQueue()};
     }
 }

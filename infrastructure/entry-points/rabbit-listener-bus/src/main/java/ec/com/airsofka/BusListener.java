@@ -48,11 +48,9 @@ public class BusListener implements BusEventListener {
             UserSavedViewUseCase userSavedViewUseCase,
             UserUpdatedViewUseCase userUpdatedViewUseCase,
             PlaneSavedViewUseCase planeSavedViewUseCase,
+            SeatListSavedViewUseCase seatListSavedViewUseCase,
             MaintenanceSavedViewUseCase maintenanceSavedViewUseCase
     ) {
-    public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase,
-                       UserSavedViewUseCase userSavedViewUseCase, UserUpdatedViewUseCase userUpdatedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase)
-     {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
         this.flightSavedViewUseCase = flightSavedViewUseCase;
