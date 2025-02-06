@@ -8,5 +8,6 @@ public interface IEventMongoRepository extends ReactiveMongoRepository<EventEnti
     Flux<EventEntity> findAllByAggregateId(String aggregateId);
     Flux<EventEntity> findAllByAggregateRootName(String aggregateRootName);
     Flux<EventEntity> findAllByAggregateRootNameAndEventType(String aggregateRootName, String eventType);
+    Flux<EventEntity> findByAggregateId(String aggregateId);
 
 }

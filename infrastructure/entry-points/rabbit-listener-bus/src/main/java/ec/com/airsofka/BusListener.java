@@ -15,7 +15,6 @@ import ec.com.airsofka.gateway.dto.SeatDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.plane.queries.usecases.PlaneSavedViewUseCase;
-import ec.com.airsofka.rabbit.RabbitProperties;
 import ec.com.airsofka.seat.queries.usecases.SeatListSavedViewUseCase;
 import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
 import ec.com.airsofka.user.queries.usecases.UserSavedViewUseCase;
@@ -38,8 +37,8 @@ public class BusListener implements BusEventListener {
     private final SeatListSavedViewUseCase seatListSavedViewUseCase;
 
     public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase,
-                       UserSavedViewUseCase userSavedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase) {
-    public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase, UserSavedViewUseCase userSavedViewUseCase, UserUpdatedViewUseCase userUpdatedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase) {
+                       UserSavedViewUseCase userSavedViewUseCase, UserUpdatedViewUseCase userUpdatedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase)
+     {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
         this.flightSavedViewUseCase = flightSavedViewUseCase;

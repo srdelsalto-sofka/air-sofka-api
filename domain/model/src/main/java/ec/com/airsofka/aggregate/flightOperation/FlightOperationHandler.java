@@ -69,8 +69,3 @@ public class FlightOperationHandler extends DomainActionsContainer {
     }
 }
 
-//en la parte de model, donde esta Seat tener un array de seatCreatedDTO con toda la distribucion de asientos en una clase SeatData (con tipo 15 asientos ya hardcodeados). Y en el caso de uso de createflight le pasas ese array y listo
-//caso de uso de CreateFlight llamar eso
-//trabajar mientras con 5 o 6 asientos (coleccion de Seats)
-//caso de uso de query para traer los asientos. GetSeatsByFlightId. Y ahi ya tengo el status
-// funciona como una mini reserva o pre reserva antes de enviar la reserva del vuelo completa. UpdateSeatStatusUseCase (le paso el id del asiento y el status).
