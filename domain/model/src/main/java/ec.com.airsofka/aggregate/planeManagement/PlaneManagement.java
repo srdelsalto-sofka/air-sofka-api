@@ -1,18 +1,24 @@
 package ec.com.airsofka.aggregate.planeManagement;
 
 
+import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
 import ec.com.airsofka.aggregate.planeManagement.values.PlaneManagementId;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.utils.AggregateRoot;
+import ec.com.airsofka.maintenance.Maintenance;
+import ec.com.airsofka.maintenance.values.MaintenanceId;
 import ec.com.airsofka.plane.Plane;
 import ec.com.airsofka.plane.PlaneStatus;
 import ec.com.airsofka.plane.values.PlaneId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 public class PlaneManagement extends AggregateRoot<PlaneManagementId> {
     private Plane plane;
+    private Maintenance maintenance;
 
     public PlaneManagement() {
         super(new PlaneManagementId());
@@ -32,8 +38,20 @@ public class PlaneManagement extends AggregateRoot<PlaneManagementId> {
         this.plane = plane;
     }
 
+    public Maintenance getMaintenance() {
+        return maintenance;
+    }
+
+    public void setMaintenance(Maintenance maintenance) {
+        this.maintenance = maintenance;
+    }
+
     public void createPlane(PlaneStatus state, String model) {
         addEvent(new PlaneCreated(new PlaneId().getValue(), state, model)).apply();
+    }
+
+    public void createMaintenance(LocalDateTime start, LocalDateTime end, String idPlane) {
+        addEvent(new MaintenanceCreated(new MaintenanceId().getValue(), start, end, idPlane)).apply();
     }
 
     public static Mono<PlaneManagement> from(final String id, Flux<DomainEvent> events) {
