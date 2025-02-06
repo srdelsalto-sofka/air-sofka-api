@@ -29,21 +29,11 @@ public class UpdateUserUseCase implements IUseCaseExecute<UpdateUserCommand, Use
     @Override
     public Mono<UserResponse> execute(UpdateUserCommand cmd) {
         Mono<UserCreated> userCreatedEvent = eventRepository.findAllAggregateByEvent("auth",EventsAuthEnum.USER_CREATED.name())
-                .switchIfEmpty(Mono.error( new NoSuchElementException("error")))
                 .map(event -> (UserCreated) event)
-                .doOnNext(userCreated ->
-                    System.out.println(userCreated.getUserId())
-                ).doOnError(error ->{
-                    System.out.println("error222 "+error.getMessage());
-                })
                 .filter(event -> event.getUserId().equals(cmd.getUserId()))
                 .single();
 
-        return userCreatedEvent
-                .doOnNext(userCreated -> {
-                    System.out.println(userCreated.getUserId());
-                })
-                .flatMap(userUpdated -> {
+        return userCreatedEvent.flatMap(userUpdated -> {
             Flux<DomainEvent> eventsUser = eventRepository.findAggregate(userUpdated.getAggregateRootId(),"auth");
 
 

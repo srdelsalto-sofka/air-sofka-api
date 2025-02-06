@@ -4,25 +4,26 @@ import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.user.values.objects.DocumentType;
 import ec.com.airsofka.user.values.objects.Role;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class UserUpdated extends DomainEvent {
 
-    private final String userId;
-    private final LocalDateTime birthDate;
-    private final String documentNumber;
-    private final DocumentType documentType;
-    private final String email;
-    private final String firstLastName;
-    private final Boolean frequent;
-    private final String lastLastName;
-    private final String name;
-    private final Integer numberOfFlights;
-    private final String password;
-    private final String phone;
-    private final String prefix;
-    private final Role role;
-    private final String title;
+    private String userId;
+    private LocalDateTime birthDate;
+    private String documentNumber;
+    private DocumentType documentType;
+    private String email;
+    private String firstLastName;
+    private Boolean frequent;
+    private String lastLastName;
+    private String name;
+    private Integer numberOfFlights;
+    private String password;
+    private String phone;
+    private String prefix;
+    private Role role;
+    private String title;
 
 
     public UserUpdated(String userId, LocalDateTime birthDate, String documentNumber, DocumentType documentType, String email, String firstLastName, Boolean frequent, String lastLastName, String name, Integer numberOfFlights, String password, String phone, String prefix, Role role, String title) {
@@ -42,6 +43,10 @@ public class UserUpdated extends DomainEvent {
         this.prefix = prefix;
         this.role = role;
         this.title = title;
+    }
+
+    public UserUpdated() {
+        super(EventsAuthEnum.USER_UPDATED.name());
     }
 
     public String getUserId() {

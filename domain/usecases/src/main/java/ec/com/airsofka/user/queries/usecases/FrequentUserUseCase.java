@@ -8,6 +8,7 @@ import ec.com.airsofka.user.commands.usecases.UpdateUserUseCase;
 import ec.com.airsofka.user.queries.query.GetByElementQuery;
 import reactor.core.publisher.Mono;
 import ec.com.airsofka.utils.mappers.UserMapper;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.NoSuchElementException;
 
@@ -30,18 +31,17 @@ public class FrequentUserUseCase implements IUseCaseAccept<GetByElementQuery,Voi
     public void accept(GetByElementQuery request) {
         userRepository.findById(request.getElement())
                 .switchIfEmpty(Mono.error(new NoSuchElementException("User not found by id")))
-                .map(userDTO -> {
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(userDTO -> {
                     userDTO.setNumberOfFlights(userDTO.getNumberOfFlights() + 1);
-
                     if (userDTO.getNumberOfFlights() >= 10) {
                         userDTO.setFrequent(true);
                     }
-
                     UpdateUserCommand updateUserCommand = UserMapper.toUpdateUserCommand(userDTO);
-
-                    return updateUserUseCase.execute(updateUserCommand).subscribe();
+                    return updateUserUseCase.execute(updateUserCommand);
                 })
-                .doOnTerminate(() -> System.out.println("Update completed"))
+                .doOnSuccess(userResponse -> System.out.println("Update completed for user: " + userResponse.getId()))
+                .doOnError(e -> System.out.println("Error updating user"+e.getMessage()))
                 .subscribe();
     }
 

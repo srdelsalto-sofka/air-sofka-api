@@ -16,18 +16,14 @@ import reactor.core.publisher.Mono;
 public class CreateBookingUseCase  implements IUseCaseExecute<CreateBookingCommand, BookingResponse> {
     private final IEventStore repository;
     private final BusEvent busEvent;
-    private final FrequentUserUseCase frequentUserUseCase;
 
-    public CreateBookingUseCase(IEventStore repository, BusEvent busEvent, FrequentUserUseCase frequentUserUseCase) {
+    public CreateBookingUseCase(IEventStore repository, BusEvent busEvent) {
         this.repository = repository;
         this.busEvent = busEvent;
-        this.frequentUserUseCase = frequentUserUseCase;
     }
 
     @Override
     public Mono<BookingResponse> execute(CreateBookingCommand cmd) {
-
-        this.frequentUserUseCase.accept(new GetByElementQuery("2e09a545-b954-4236-9753-d70f2b24d829"));
 
         Reservation reservation = new Reservation();
         reservation.createReservation(cmd.getStatus());
