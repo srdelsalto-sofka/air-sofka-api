@@ -1,29 +1,28 @@
 package ec.com.airsofka.aggregate.reservation;
 
-import ec.com.airsofka.aggregate.flightOperation.FlightOperation;
-import ec.com.airsofka.aggregate.flightOperation.FlightOperationHandler;
-import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
-import ec.com.airsofka.aggregate.flightOperation.values.FlightOperationId;
-import ec.com.airsofka.aggregate.reservation.events.BillingCreated;
+
 import ec.com.airsofka.aggregate.reservation.events.BookingCreated;
 import ec.com.airsofka.aggregate.reservation.values.ReservationId;
+import ec.com.airsofka.billing.Billing;
 import ec.com.airsofka.booking.Booking;
 import ec.com.airsofka.booking.values.BookingId;
-import ec.com.airsofka.booking.values.objects.Status;
-import ec.com.airsofka.flight.Flight;
-import ec.com.airsofka.flight.values.FlightId;
+import ec.com.airsofka.contact.Contact;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.utils.AggregateRoot;
+import ec.com.airsofka.passenger.Passenger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 public class Reservation  extends AggregateRoot<ReservationId> {
 
 
 
     private Booking booking;
+    private Contact contact;
+    private List<Passenger> passengers;
+    private Billing billing;
 
     public Reservation() {
         super(new ReservationId());
@@ -38,8 +37,25 @@ public class Reservation  extends AggregateRoot<ReservationId> {
 
 
     public void createReservation(String status) {
-        addEvent(new BookingCreated(new BookingId().getValue(), status)).apply();
+
     }
+
+    public void createBooking() {
+
+    }
+
+    public void createBilling() {
+
+    }
+
+    public void createContact() {
+    }
+
+    public void createPassengers() {
+    }
+
+
+
 
     public Booking getBooking() {
         return booking;
@@ -47,6 +63,30 @@ public class Reservation  extends AggregateRoot<ReservationId> {
 
     public void setBooking(Booking booking) {
         this.booking = booking;
+    }
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public List<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(List<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public Billing getBilling() {
+        return billing;
+    }
+
+    public void setBilling(Billing billing) {
+        this.billing = billing;
     }
 
     public static Mono<Reservation> from(final String id, Flux<DomainEvent> events) {
