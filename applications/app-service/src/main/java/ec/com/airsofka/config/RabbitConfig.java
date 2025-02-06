@@ -90,6 +90,7 @@ public class RabbitConfig {
                 .with(envProperties.getUserUpdatedRoutingKey());
     }
 
+    @Bean
     public TopicExchange planeCreatedExchange() {
         return new TopicExchange(envProperties.getPlaneCreatedExchange(), true, false);
     }
@@ -103,6 +104,41 @@ public class RabbitConfig {
     public Binding planeCreatedBinding() {
         return BindingBuilder.bind(planeCreatedQueue())
                 .to(planeCreatedExchange())
+                .with(envProperties.getPlaneCreatedRoutingKey());
+    }
+
+    @Bean
+    public TopicExchange maintenanceExchange() {
+        System.out.println(envProperties.getMaintenanceExchange());
+        return new TopicExchange(envProperties.getMaintenanceExchange(), true, false);
+    }
+
+    @Bean
+    public Queue maintenanceQueue() {
+        return new Queue(envProperties.getMaintenanceQueue(), true);
+    }
+
+    @Bean
+    public Binding maintenanceBinding() {
+        return BindingBuilder.bind(maintenanceQueue())
+                .to(maintenanceExchange())
+                .with(envProperties.getMaintenanceRoutingKey());
+    }
+
+    @Bean
+    public TopicExchange planeUpdatedExchange() {
+        return new TopicExchange(envProperties.getPlaneUpdatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue planeUpdatedQueue() {
+        return new Queue(envProperties.getPlaneUpdatedQueue(), true);
+    }
+
+    @Bean
+    public Binding planeUpdatedBinding() {
+        return BindingBuilder.bind(planeUpdatedQueue())
+                .to(planeUpdatedExchange())
                 .with(envProperties.getPlaneCreatedRoutingKey());
     }
 
@@ -125,10 +161,18 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(userUpdatedExchange());
             amqpAdmin.declareQueue(userUpdatedQueue());
             amqpAdmin.declareBinding(userUpdatedBinding());
-            
+
             amqpAdmin.declareExchange(planeCreatedExchange());
             amqpAdmin.declareQueue(planeCreatedQueue());
             amqpAdmin.declareBinding(planeCreatedBinding());
+
+            amqpAdmin.declareExchange(maintenanceExchange());
+            amqpAdmin.declareQueue(maintenanceQueue());
+            amqpAdmin.declareBinding(maintenanceBinding());
+
+            amqpAdmin.declareExchange(planeUpdatedExchange());
+            amqpAdmin.declareQueue(planeUpdatedQueue());
+            amqpAdmin.declareBinding(planeUpdatedBinding());
         };
     }
 

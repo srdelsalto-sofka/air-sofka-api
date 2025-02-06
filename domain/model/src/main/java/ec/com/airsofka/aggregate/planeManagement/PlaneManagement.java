@@ -3,6 +3,7 @@ package ec.com.airsofka.aggregate.planeManagement;
 
 import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
+import ec.com.airsofka.aggregate.planeManagement.events.PlaneUpdated;
 import ec.com.airsofka.aggregate.planeManagement.values.PlaneManagementId;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.utils.AggregateRoot;
@@ -52,6 +53,10 @@ public class PlaneManagement extends AggregateRoot<PlaneManagementId> {
 
     public void createMaintenance(LocalDateTime start, LocalDateTime end, String idPlane) {
         addEvent(new MaintenanceCreated(new MaintenanceId().getValue(), start, end, idPlane)).apply();
+    }
+
+    public void updatePlane(String id, PlaneStatus state, String model) {
+        addEvent(new PlaneUpdated(id, state, model)).apply();
     }
 
     public static Mono<PlaneManagement> from(final String id, Flux<DomainEvent> events) {
