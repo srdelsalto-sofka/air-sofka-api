@@ -2,6 +2,7 @@ package ec.com.airsofka;
 
 import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
+import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
@@ -10,10 +11,12 @@ import ec.com.airsofka.flight.queries.usecases.UserSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.gateway.dto.PlaneDTO;
+import ec.com.airsofka.gateway.dto.SeatDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.plane.queries.usecases.PlaneSavedViewUseCase;
 import ec.com.airsofka.rabbit.RabbitProperties;
+import ec.com.airsofka.seat.queries.usecases.SeatListSavedViewUseCase;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -29,14 +32,16 @@ public class BusListener implements BusEventListener {
     private final FlightSavedViewUseCase flightSavedViewUseCase;
     private final UserSavedViewUseCase userSavedViewUseCase;
     private final PlaneSavedViewUseCase planeSavedViewUseCase;
+    private final SeatListSavedViewUseCase seatListSavedViewUseCase;
 
     public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase,
-                       UserSavedViewUseCase userSavedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase) {
+                       UserSavedViewUseCase userSavedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase) {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
         this.flightSavedViewUseCase = flightSavedViewUseCase;
         this.userSavedViewUseCase = userSavedViewUseCase;
         this.planeSavedViewUseCase = planeSavedViewUseCase;
+        this.seatListSavedViewUseCase = seatListSavedViewUseCase;
     }
 
     @Override
@@ -132,5 +137,25 @@ public class BusListener implements BusEventListener {
         );
 
         planeSavedViewUseCase.accept(planeDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getSeatReservedQueue()}")
+    public void receiveSeatReserved(DomainEvent seatListUpdated) {
+        SeatReserved seat = (SeatReserved) seatListUpdated;
+
+        SeatDTO seatDTO = new SeatDTO(
+                seat.getSeatId(),
+                seat.getNumber(),
+                seat.getRow(),
+                seat.getColumn(),
+                seat.getType(),
+                seat.getStatus(),
+                seat.getPrice(),
+                seat.getIdFlight()
+        );
+
+        seatListSavedViewUseCase.accept(seatDTO);
+
     }
 }

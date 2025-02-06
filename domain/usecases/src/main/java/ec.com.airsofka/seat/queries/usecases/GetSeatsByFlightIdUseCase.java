@@ -1,5 +1,6 @@
 package ec.com.airsofka.seat.queries.usecases;
 
+import ec.com.airsofka.gateway.SeatRepository;
 import ec.com.airsofka.generics.interfaces.IUseCaseGetBy;
 import ec.com.airsofka.generics.utils.QueryResponse;
 import ec.com.airsofka.seat.queries.responses.SeatResponse;
@@ -14,9 +15,9 @@ public class GetSeatsByFlightIdUseCase implements IUseCaseGetBy<String, SeatResp
 
     @Override
     public Mono<QueryResponse<SeatResponse>> get(String flightId) {
-        return seatRepository.getByFlightId(flightId)
+        return seatRepository.getAllByFlightId(flightId)
                 .map(seatDTO -> new SeatResponse(
-                        seatDTO.getSeatId(),
+                        seatDTO.getId(),
                         seatDTO.getNumber(),
                         seatDTO.getRow(),
                         seatDTO.getColumn(),

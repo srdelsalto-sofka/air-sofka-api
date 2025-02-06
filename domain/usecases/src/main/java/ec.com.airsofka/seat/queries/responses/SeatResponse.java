@@ -4,7 +4,6 @@ import ec.com.airsofka.seat.SeatClass;
 import ec.com.airsofka.seat.SeatStatus;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public class SeatResponse {
     private final String id;
