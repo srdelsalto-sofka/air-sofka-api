@@ -1,20 +1,19 @@
 package ec.com.airsofka;
 
 import ec.com.airsofka.aggregate.auth.events.UserCreated;
-import ec.com.airsofka.aggregate.auth.events.UserUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
+import ec.com.airsofka.flight.queries.usecases.UserSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
-import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
-import ec.com.airsofka.user.queries.usecases.UserSavedViewUseCase;
-import ec.com.airsofka.user.queries.usecases.UserUpdatedViewUseCase;
+import ec.com.airsofka.rabbit.RabbitProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,16 +25,12 @@ public class BusListener implements BusEventListener {
     private final SendEmailUseCase sendEmailUseCase;
     private final FlightSavedViewUseCase flightSavedViewUseCase;
     private final UserSavedViewUseCase userSavedViewUseCase;
-    private final UserUpdatedViewUseCase userUpdatedViewUseCase;
-
-
     public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase,
-                       UserSavedViewUseCase  userSavedViewUseCase,UserUpdatedViewUseCase userUpdatedViewUseCase) {
+                       UserSavedViewUseCase  userSavedViewUseCase) {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
         this.flightSavedViewUseCase = flightSavedViewUseCase;
         this.userSavedViewUseCase = userSavedViewUseCase;
-        this.userUpdatedViewUseCase = userUpdatedViewUseCase;
     }
 
     @Override
@@ -117,30 +112,5 @@ public class BusListener implements BusEventListener {
                 user.getTitle()
         );
         userSavedViewUseCase.accept(userDTO);
-    }
-
-    @Override
-    @RabbitListener(queues = "#{rabbitProperties.getUserUpdatedQueue()}")
-    public void receiveUserUpdated(DomainEvent userUpdated) {
-        UserUpdated user = (UserUpdated) userUpdated;
-
-        UserDTO userDTO = new UserDTO(
-                user.getUserId(),
-                user.getBirthDate(),
-                user.getDocumentNumber(),
-                user.getDocumentType(),
-                user.getEmail(),
-                user.getFirstLastName(),
-                user.getFrequent(),
-                user.getLastLastName(),
-                user.getName(),
-                user.getNumberOfFlights(),
-                user.getPassword(),
-                user.getPhone(),
-                user.getPrefix(),
-                user.getRole(),
-                user.getTitle()
-        );
-        userUpdatedViewUseCase.accept(userDTO);
     }
 }

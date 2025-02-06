@@ -8,6 +8,7 @@ import ec.com.airsofka.mapper.FlightMapperEntity;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -25,5 +26,10 @@ public class FlightMongoAdapter implements FlightRepository {
     public Mono<FlightDTO> save(FlightDTO flightDTO) {
         FlightEntity flightEntity = FlightMapperEntity.toEntity(flightDTO);
         return repository.save(flightEntity).map(FlightMapperEntity::fromEntity);
+    }
+
+    @Override
+    public Flux<FlightDTO> getAll() {
+        return repository.findAll().map(FlightMapperEntity::fromEntity);
     }
 }

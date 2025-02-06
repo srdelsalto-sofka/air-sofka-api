@@ -44,6 +44,14 @@ public class RabbitProperties {
 
     @Value("${userUpdated.routing.key}")
     private String  userUpdatedRoutingKey;
+    @Value("${planeCreated.exchange.name}")
+    private String planeCreatedExchange;
+
+    @Value("${planeCreated.queue.name}")
+    private String planeCreatedQueue;
+
+    @Value("${planeCreated.routing.key}")
+    private String planeCreatedRoutingKey;
 
 
     public String getBookingExchange() {
@@ -95,7 +103,19 @@ public class RabbitProperties {
         return userUpdatedRoutingKey;
     }
 
+    public String getPlaneCreatedExchange() {
+        return planeCreatedExchange;
+    }
+
+    public String getPlaneCreatedQueue() {
+        return planeCreatedQueue;
+    }
+
+    public String getPlaneCreatedRoutingKey() {
+        return planeCreatedRoutingKey;
+    }
+
     public String[] getAllQueues() {
-        return new String[]{getBookingQueue(), getFlightCreatedQueue(), getUserCreatedQueue(),getUserUpdatedQueue()};
+        return new String[]{getBookingQueue(), getFlightCreatedQueue(), getUserCreatedQueue(), getPlaneCreatedQueue(), getUserUpdatedQueue()};
     }
 }
