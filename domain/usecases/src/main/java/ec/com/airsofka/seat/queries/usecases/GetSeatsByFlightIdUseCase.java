@@ -4,8 +4,10 @@ import ec.com.airsofka.gateway.SeatRepository;
 import ec.com.airsofka.generics.interfaces.IUseCaseGetBy;
 import ec.com.airsofka.generics.utils.QueryResponse;
 import ec.com.airsofka.seat.queries.responses.SeatResponse;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+@Service
 public class GetSeatsByFlightIdUseCase implements IUseCaseGetBy<String, SeatResponse> {
     private final SeatRepository seatRepository;
 

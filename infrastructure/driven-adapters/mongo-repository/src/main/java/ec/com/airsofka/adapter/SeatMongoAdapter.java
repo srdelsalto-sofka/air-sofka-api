@@ -5,11 +5,14 @@ import ec.com.airsofka.database.airsofka.SeatMongoRepository;
 import ec.com.airsofka.gateway.SeatRepository;
 import ec.com.airsofka.gateway.dto.SeatDTO;
 import ec.com.airsofka.mapper.SeatMapperEntity;
+import ec.com.airsofka.seat.Seat;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Repository
 public class SeatMongoAdapter implements SeatRepository {
 
     private final SeatMongoRepository repository;
@@ -33,6 +36,6 @@ public class SeatMongoAdapter implements SeatRepository {
 
     @Override
     public Flux<SeatDTO> getAllByFlightId(String id) {
-        return null;
+        return repository.findAllByIdFlight(id).map(SeatMapperEntity::fromEntity);
     }
 }
