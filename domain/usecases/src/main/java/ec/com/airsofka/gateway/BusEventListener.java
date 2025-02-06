@@ -11,4 +11,6 @@ public interface BusEventListener {
     void receiveSeatReserved(DomainEvent seatListUpdated);
     void receiveUserCreated(DomainEvent userCreated);
     void receiveUserUpdated(DomainEvent userUpdated);
+    void receiveMaintenanceCreated(DomainEvent maintenanceCreated);
+    void receivePlaneUpdated(DomainEvent planeUpdated);
 }

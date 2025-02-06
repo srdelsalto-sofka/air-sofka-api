@@ -49,7 +49,7 @@ public class BusAdapter implements BusEvent {
             rabbitTemplate.convertAndSend(envProperties.getUserUpdatedExchange(), envProperties.getUserUpdatedRoutingKey(), domainEvent);
         });
     }
-    
+
     public void sendEventPlaneCreated(Mono<DomainEvent> event) {
         event.subscribe(
                 domainEvent -> rabbitTemplate.convertAndSend(
@@ -64,6 +64,26 @@ public class BusAdapter implements BusEvent {
         event.subscribe(domainEvent -> {
             rabbitTemplate.convertAndSend(envProperties.getSeatReservedExchange(), envProperties.getSeatReservedRoutingKey(), domainEvent);
         });
+    }
+
+    @Override
+    public void sendEventMaintenanceCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getMaintenanceExchange(), envProperties.getMaintenanceRoutingKey(),
+                        domainEvent
+                )
+        );
+    }
+
+    @Override
+    public void sendEventPlaneUpdated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getPlaneUpdatedExchange(), envProperties.getPlaneUpdatedRoutingKey(),
+                        domainEvent
+                )
+        );
     }
 
 }

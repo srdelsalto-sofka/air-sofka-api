@@ -4,16 +4,20 @@ import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.auth.events.UserUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
+import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
+import ec.com.airsofka.aggregate.planeManagement.events.PlaneUpdated;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.dto.FlightDTO;
+import ec.com.airsofka.gateway.dto.MaintenanceDTO;
 import ec.com.airsofka.gateway.dto.PlaneDTO;
 import ec.com.airsofka.gateway.dto.SeatDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
+import ec.com.airsofka.maintenance.queries.usecases.MaintenanceSavedViewUseCase;
 import ec.com.airsofka.plane.queries.usecases.PlaneSavedViewUseCase;
 import ec.com.airsofka.seat.queries.usecases.SeatListSavedViewUseCase;
 import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
@@ -35,7 +39,17 @@ public class BusListener implements BusEventListener {
     private final UserUpdatedViewUseCase userUpdatedViewUseCase;
     private final PlaneSavedViewUseCase planeSavedViewUseCase;
     private final SeatListSavedViewUseCase seatListSavedViewUseCase;
+    private final MaintenanceSavedViewUseCase maintenanceSavedViewUseCase;
 
+    public BusListener(
+            RabbitProperties rabbitProperties,
+            SendEmailUseCase sendEmailUseCase,
+            FlightSavedViewUseCase flightSavedViewUseCase,
+            UserSavedViewUseCase userSavedViewUseCase,
+            UserUpdatedViewUseCase userUpdatedViewUseCase,
+            PlaneSavedViewUseCase planeSavedViewUseCase,
+            MaintenanceSavedViewUseCase maintenanceSavedViewUseCase
+    ) {
     public BusListener(RabbitProperties rabbitProperties, SendEmailUseCase sendEmailUseCase, FlightSavedViewUseCase flightSavedViewUseCase,
                        UserSavedViewUseCase userSavedViewUseCase, UserUpdatedViewUseCase userUpdatedViewUseCase, PlaneSavedViewUseCase planeSavedViewUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase)
      {
@@ -46,6 +60,7 @@ public class BusListener implements BusEventListener {
         this.userUpdatedViewUseCase = userUpdatedViewUseCase;
         this.planeSavedViewUseCase = planeSavedViewUseCase;
         this.seatListSavedViewUseCase = seatListSavedViewUseCase;
+        this.maintenanceSavedViewUseCase = maintenanceSavedViewUseCase;
     }
 
     @Override
@@ -154,10 +169,40 @@ public class BusListener implements BusEventListener {
         userUpdatedViewUseCase.accept(userDTO);
     }
 
+
     @Override
     @RabbitListener(queues = "#{rabbitProperties.getPlaneCreatedQueue()}")
     public void receivePlaneCreated(DomainEvent planeCreated) {
         PlaneCreated plane = (PlaneCreated) planeCreated;
+
+        PlaneDTO planeDTO = new PlaneDTO(
+                plane.getId(),
+                plane.getState(),
+                plane.getModel()
+        );
+
+        planeSavedViewUseCase.accept(planeDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getMaintenanceQueue()}")
+    public void receiveMaintenanceCreated(DomainEvent maintenanceCreated) {
+        MaintenanceCreated maintenance = (MaintenanceCreated) maintenanceCreated;
+
+        MaintenanceDTO maintenanceDTO = new MaintenanceDTO(
+                maintenance.getId(),
+                maintenance.getStart(),
+                maintenance.getEnd(),
+                maintenance.getIdPlane()
+        );
+
+        maintenanceSavedViewUseCase.accept(maintenanceDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getPlaneUpdatedQueue()}")
+    public void receivePlaneUpdated(DomainEvent planeUpdated) {
+        PlaneUpdated plane = (PlaneUpdated) planeUpdated;
 
         PlaneDTO planeDTO = new PlaneDTO(
                 plane.getId(),
