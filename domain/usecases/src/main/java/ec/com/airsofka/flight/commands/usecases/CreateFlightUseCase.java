@@ -38,9 +38,9 @@ public class CreateFlightUseCase implements IUseCaseExecute<CreateFlightCommand,
                         new SeatCreatedDTO( "C1", 3, "A", SeatClass.FIRST, SeatStatus.AVAILABLE, new BigDecimal("500.00"), "FL789"),
                         new SeatCreatedDTO( "C2", 3, "B", SeatClass.FIRST, SeatStatus.OCCUPIED, new BigDecimal("500.00"), "FL789")
                 )
-        );*/
+        );
 
-        System.out.println(flightOperation.getSeatList().get(1).getIdFlight());
+        System.out.println(flightOperation.getSeatList().get(1).getIdFlight());*/
 
         flightOperation.getUncommittedEvents()
                 .stream()
