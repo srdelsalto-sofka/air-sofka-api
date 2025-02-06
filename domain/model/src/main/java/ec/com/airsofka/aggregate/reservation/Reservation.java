@@ -1,11 +1,9 @@
 package ec.com.airsofka.aggregate.reservation;
 
 
-import ec.com.airsofka.aggregate.reservation.events.BookingCreated;
 import ec.com.airsofka.aggregate.reservation.values.ReservationId;
 import ec.com.airsofka.billing.Billing;
 import ec.com.airsofka.booking.Booking;
-import ec.com.airsofka.booking.values.BookingId;
 import ec.com.airsofka.contact.Contact;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.utils.AggregateRoot;

@@ -1,6 +1,5 @@
 package ec.com.airsofka.passenger.values;
 
-import ec.com.airsofka.contact.values.ContactId;
 import ec.com.airsofka.generics.utils.Identity;
 
 public class PassengerId extends Identity {
