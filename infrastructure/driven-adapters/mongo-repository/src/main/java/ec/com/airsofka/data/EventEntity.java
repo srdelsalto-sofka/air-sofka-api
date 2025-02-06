@@ -108,9 +108,13 @@ public class EventEntity {
                     .map(part -> Character.toUpperCase(part.charAt(0)) + part.substring(1))
                     .collect(Collectors.joining());
 
+            System.out.println("ec.com.airsofka.aggregate." + aggregate + ".events." + className);
+            System.out.println(Class.forName("ec.com.airsofka.aggregate." + aggregate + ".events." + className).getName());
+
             return (DomainEvent) eventSerializer
                     .readFromJson(this.getEventData(), Class.forName("ec.com.airsofka.aggregate." + aggregate + ".events." + className));
         } catch (ClassNotFoundException e) {
+            System.out.println("Error aca" + e.getMessage());
             return null;
         }
     }

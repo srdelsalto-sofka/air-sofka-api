@@ -3,12 +3,14 @@ package ec.com.airsofka;
 import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.auth.events.UserUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
+import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.dto.FlightDTO;
+import ec.com.airsofka.gateway.dto.MaintenanceDTO;
 import ec.com.airsofka.gateway.dto.PlaneDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.generics.domain.DomainEvent;
@@ -147,6 +149,7 @@ public class BusListener implements BusEventListener {
         userUpdatedViewUseCase.accept(userDTO);
     }
 
+
     @Override
     @RabbitListener(queues = "#{rabbitProperties.getPlaneCreatedQueue()}")
     public void receivePlaneCreated(DomainEvent planeCreated) {
@@ -159,5 +162,18 @@ public class BusListener implements BusEventListener {
         );
 
         planeSavedViewUseCase.accept(planeDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getMaintenanceCreatedQueue()}")
+    public void receiveMaintenanceCreated(DomainEvent maintenanceCreated) {
+        MaintenanceCreated maintenance = (MaintenanceCreated) maintenanceCreated;
+
+        MaintenanceDTO maintenanceDTO = new MaintenanceDTO(
+                maintenance.getId(),
+                maintenance.getStart(),
+                maintenance.getEnd(),
+                maintenance.getIdPlane()
+        );
     }
 }

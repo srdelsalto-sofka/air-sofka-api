@@ -9,4 +9,5 @@ public interface BusEvent {
     void sendEventUserCreated(Mono<DomainEvent> event);
     void sendEventUserUpdated(Mono<DomainEvent> event);
     void sendEventPlaneCreated(Mono<DomainEvent> event);
+    void sendEventMaintenanceCreated(Mono<DomainEvent> event);
 }
