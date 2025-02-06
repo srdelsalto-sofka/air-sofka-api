@@ -1,14 +1,12 @@
 package ec.com.airsofka.commands.usecases;
 
 
-import ec.com.airsofka.EmailTemplate;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.data.Seat;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.queries.responses.EmailResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.reactivestreams.Publisher;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
