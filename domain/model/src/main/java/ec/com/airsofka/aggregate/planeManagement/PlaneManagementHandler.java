@@ -2,6 +2,7 @@ package ec.com.airsofka.aggregate.planeManagement;
 
 import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
+import ec.com.airsofka.aggregate.planeManagement.events.PlaneUpdated;
 import ec.com.airsofka.generics.domain.DomainActionsContainer;
 import ec.com.airsofka.maintenance.Maintenance;
 import ec.com.airsofka.maintenance.values.MaintenanceId;
@@ -31,6 +32,15 @@ public class PlaneManagementHandler extends DomainActionsContainer {
                     PlaneId.of(event.getIdPlane())
             );
             planeManagement.setMaintenance(maintenance);
+        });
+
+        addDomainActions((PlaneUpdated event) -> {
+            Plane plane = new Plane(
+                    PlaneId.of(event.getId()),
+                    State.of(event.getState()),
+                    Model.of(event.getModel())
+            );
+            planeManagement.setPlane(plane);
         });
     }
 }
