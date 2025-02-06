@@ -2,6 +2,7 @@ package ec.com.airsofka.router;
 
 import ec.com.airsofka.handler.SeatHandler;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -10,6 +11,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 
+@Configuration
 public class SeatRouter {
     private final SeatHandler seatHandler;
 
