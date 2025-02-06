@@ -2,7 +2,7 @@ package ec.com.airsofka;
 
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.generics.domain.DomainEvent;
-import ec.com.airsofka.rabbit.RabbitProperties;
+import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -44,6 +44,12 @@ public class BusAdapter implements BusEvent {
     }
 
     @Override
+    public void sendEventUserUpdated(Mono<DomainEvent> event) {
+        event.subscribe(domainEvent -> {
+            rabbitTemplate.convertAndSend(envProperties.getUserUpdatedExchange(), envProperties.getUserUpdatedRoutingKey(), domainEvent);
+        });
+    }
+    
     public void sendEventPlaneCreated(Mono<DomainEvent> event) {
         event.subscribe(
                 domainEvent-> rabbitTemplate.convertAndSend(
