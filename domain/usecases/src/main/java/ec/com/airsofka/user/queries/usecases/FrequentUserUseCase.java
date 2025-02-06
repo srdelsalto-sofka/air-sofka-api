@@ -12,19 +12,19 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.NoSuchElementException;
 
-public class FrequentUserUseCase implements IUseCaseAccept<GetByElementQuery,Void> {
+public class FrequentUserUseCase implements IUseCaseAccept<GetByElementQuery, Void> {
 
     private final IUserRepository userRepository;
 
     private final IEventStore eventRepository;
 
     private final UpdateUserUseCase updateUserUseCase;
+
     public FrequentUserUseCase(IUserRepository userRepository, IEventStore eventRepository, UpdateUserUseCase updateUserUseCase) {
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.updateUserUseCase = updateUserUseCase;
     }
-
 
 
     @Override
@@ -40,8 +40,6 @@ public class FrequentUserUseCase implements IUseCaseAccept<GetByElementQuery,Voi
                     UpdateUserCommand updateUserCommand = UserMapper.toUpdateUserCommand(userDTO);
                     return updateUserUseCase.execute(updateUserCommand);
                 })
-                .doOnSuccess(userResponse -> System.out.println("Update completed for user: " + userResponse.getId()))
-                .doOnError(e -> System.out.println("Error updating user"+e.getMessage()))
                 .subscribe();
     }
 
