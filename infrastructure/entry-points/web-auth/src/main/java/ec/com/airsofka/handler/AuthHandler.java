@@ -3,6 +3,7 @@ package ec.com.airsofka.handler;
 import ec.com.airsofka.JwtService;
 import ec.com.airsofka.data.AuthRequestDTO;
 import ec.com.airsofka.data.AuthResponseDTO;
+import ec.com.airsofka.data.UserEntity;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,9 +44,9 @@ public class AuthHandler {
 
     private AuthResponseDTO getAuthResponse(UserDetails userDetails) {
         var extraClaims = extractAuthorities("roles", userDetails);
-
+        UserEntity user =  (UserEntity) userDetails;
         var jwtToken = jwtService.generateToken(userDetails, extraClaims);
-        return new AuthResponseDTO(jwtToken);
+        return new AuthResponseDTO(userDetails.getUsername(), user.getRole().name() ,jwtToken);
     }
 
     private Map<String, Object> extractAuthorities(String key, UserDetails userDetails) {
