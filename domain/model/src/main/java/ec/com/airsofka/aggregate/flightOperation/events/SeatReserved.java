@@ -8,8 +8,7 @@ import java.math.BigDecimal;
 
 
 public class SeatReserved extends DomainEvent {
-    private String id;
-    private String userId;
+    private String seatId;
     private String number;
     private Integer row;
     private String column;
@@ -22,10 +21,9 @@ public class SeatReserved extends DomainEvent {
         super(EventsFlighOperationEnum.SEAT_RESERVED.name());
     }
 
-    public SeatReserved(String id, String userId, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
+    public SeatReserved(String seatId, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
         super(EventsFlighOperationEnum.SEAT_RESERVED.name());
-        this.id = id;
-        this.userId = userId;
+        this.seatId = seatId;
         this.number = number;
         this.row = row;
         this.column = column;
@@ -35,12 +33,9 @@ public class SeatReserved extends DomainEvent {
         this.idFlight = idFlight;
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public String getUserId() {
-        return userId;
+    public String getSeatId() {
+        return seatId;
     }
 
     public String getNumber() {

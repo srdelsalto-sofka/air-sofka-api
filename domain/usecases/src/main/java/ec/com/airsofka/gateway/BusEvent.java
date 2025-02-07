@@ -14,6 +14,7 @@ public interface BusEvent {
 
     void sendEventPlaneCreated(Mono<DomainEvent> event);
 
+    void sendEventSeatReserved(Mono<DomainEvent> event);
     void sendEventMaintenanceCreated(Mono<DomainEvent> event);
 
     void sendEventPlaneUpdated(Mono<DomainEvent> event);

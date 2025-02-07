@@ -24,7 +24,6 @@ import java.util.List;
 public class FlightOperation extends AggregateRoot<FlightOperationId> {
     private Flight flight;
     private List<Seat> seatList;
-    private Seat seat;
 
     public FlightOperation() {
         super(new FlightOperationId());
@@ -56,11 +55,11 @@ public class FlightOperation extends AggregateRoot<FlightOperationId> {
         addEvent(new SeatListCreated(new SeatListId().getValue(), seatList)).apply();
     }
 
-    public Seat getSeat(){return seat;}
-    public void setSeat(Seat seat){this.seat = seat;}
-    public void createSeatReservation(String userId, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
-        addEvent(new SeatReserved(new SeatId().getValue(), userId, number, row, column, type, status, price, idFlight)).apply();
+            /*Actualiza la lista de asientos. Funciona como un update */
+    public void createSeatReservation(String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
+        addEvent(new SeatReserved(new SeatId().getValue(), number, row, column, type, status, price, idFlight)).apply();
     }
+
 
     public static Mono<FlightOperation> from(final String id, Flux<DomainEvent> events) {
         FlightOperation flightOperation = new FlightOperation(id);

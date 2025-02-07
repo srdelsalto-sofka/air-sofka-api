@@ -1,7 +1,5 @@
 package ec.com.airsofka.config;
 
-import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
-
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -157,6 +155,20 @@ public class RabbitConfig {
         return BindingBuilder.bind(seatCreatedQueue())
                 .to(seatCreatedExchange())
                 .with(envProperties.getSeatCreatedRoutingKey());
+    public TopicExchange seatReservedExchange() {
+        return new TopicExchange(envProperties.getSeatReservedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue seatReservedQueue() {
+        return new Queue(envProperties.getSeatReservedQueue(), true);
+    }
+
+    @Bean
+    public Binding seatReservedBinding() {
+        return BindingBuilder.bind(seatReservedQueue())
+                .to(seatReservedExchange())
+                .with(envProperties.getSeatReservedRoutingKey());
     }
 
     @Bean
@@ -195,6 +207,9 @@ public class RabbitConfig {
             amqpAdmin.declareQueue(seatCreatedQueue());
             amqpAdmin.declareBinding(seatCreatedBinding());
 
+            amqpAdmin.declareExchange(seatReservedExchange());
+            amqpAdmin.declareQueue(seatReservedQueue());
+            amqpAdmin.declareBinding(seatReservedBinding());
         };
     }
 
