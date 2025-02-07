@@ -34,7 +34,7 @@ public class SecurityConfig {
                                 .pathMatchers("/api/auth/**",
                                         "/webjars/swagger-ui/**",
                                         "/v3/api-docs/**", "/users").permitAll()
-                                .pathMatchers(HttpMethod.GET, "/flights", "/seats").permitAll()
+                                .pathMatchers(HttpMethod.GET, "/flights", "/seats/**").permitAll()
 /*                                .pathMatchers(HttpMethod.POST, "/flights").hasAuthority("ADMIN")
                                 .pathMatchers("/planes", "/maintenance").hasAuthority("ADMIN")*/
                                 .anyExchange()
