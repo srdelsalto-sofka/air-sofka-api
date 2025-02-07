@@ -5,6 +5,7 @@ import ec.com.airsofka.data.AuthRequestDTO;
 import ec.com.airsofka.data.AuthResponseDTO;
 import ec.com.airsofka.exceptions.RequestValidationException;
 import ec.com.airsofka.handler.AuthHandler;
+import ec.com.airsofka.user.values.objects.Role;
 import ec.com.airsofka.validator.RequestValidatorShared;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +44,7 @@ public class AuthRouterTest {
         webTestClient = WebTestClient.bindToRouterFunction(authRouter.authRouters()).build();
 
         authRequestDTO = new AuthRequestDTO("test@gmail.com","Test123.");
-        authResponseDTO = new AuthResponseDTO("as23n23y2kweb1wel231kwd1l");
+        authResponseDTO = new AuthResponseDTO("test@gmail.com", "ADMIN", "as23n23y2kweb1wel231kwd1l");
     }
 
     @Test
