@@ -8,7 +8,10 @@ import ec.com.airsofka.mapper.MaintenanceMapperEntity;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 
 @Repository
 public class MaintenanceMongoAdapter implements MaintenanceRepository {
@@ -26,5 +29,16 @@ public class MaintenanceMongoAdapter implements MaintenanceRepository {
         MaintenanceEntity maintenanceEntity = MaintenanceMapperEntity.toEntity(maintenanceDTO);
 
         return repository.save(maintenanceEntity).map(MaintenanceMapperEntity::fromEntity);
+    }
+
+    @Override
+    public Flux<MaintenanceDTO> findByStartNow() {
+        return repository.findByStartLessThanEqualAndEndGreaterThanEqual(LocalDateTime.now()).map(MaintenanceMapperEntity::fromEntity);
+    }
+
+    @Override
+    public Flux<MaintenanceDTO> findByEnd() {
+        return repository.findByEndLessThan(LocalDateTime.now())
+                .map(MaintenanceMapperEntity::fromEntity);
     }
 }
