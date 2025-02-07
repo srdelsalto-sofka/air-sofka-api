@@ -3,11 +3,15 @@ package ec.com.airsofka.data;
 import ec.com.airsofka.user.values.objects.DocumentType;
 import ec.com.airsofka.user.values.objects.Role;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Document(collection = "users")
-public class UserEntity {
+public class UserEntity implements UserDetails {
     private String id;
     private LocalDateTime birthDate;
     private String documentNumber;
@@ -165,4 +169,35 @@ public class UserEntity {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
 }

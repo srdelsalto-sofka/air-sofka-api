@@ -5,7 +5,7 @@ import ec.com.airsofka.flight.commands.usecases.CreateFlightUseCase;
 import ec.com.airsofka.flight.queries.usecases.GetAllFlightViewUseCase;
 import ec.com.airsofka.generics.utils.QueryResponse;
 import ec.com.airsofka.mapper.FlightMapper;
-import ec.com.airsofka.validator.RequestValidator;
+import ec.com.airsofka.validator.RequestValidatorShared;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -15,11 +15,11 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class FlightHandler {
-    private final RequestValidator requestValidator;
+    private final RequestValidatorShared requestValidator;
     private final CreateFlightUseCase createFlightUseCase;
     private final GetAllFlightViewUseCase getAllFlightViewUseCase;
 
-    public FlightHandler(RequestValidator requestValidator, CreateFlightUseCase createFlightUseCase, GetAllFlightViewUseCase getAllFlightViewUseCase) {
+    public FlightHandler(RequestValidatorShared requestValidator, CreateFlightUseCase createFlightUseCase, GetAllFlightViewUseCase getAllFlightViewUseCase) {
         this.requestValidator = requestValidator;
         this.createFlightUseCase = createFlightUseCase;
         this.getAllFlightViewUseCase = getAllFlightViewUseCase;
@@ -27,7 +27,7 @@ public class FlightHandler {
 
     public Mono<ServerResponse> create(ServerRequest request) {
         return request.bodyToMono(FlightRequestDTO.class)
-                .doOnNext(requestValidator::validate)
+                .flatMap(requestValidator::validate)
                 .map(FlightMapper::toCommand)
                 .flatMap(createFlightUseCase::execute)
                 .flatMap(flightResponse ->

@@ -13,9 +13,9 @@ public class SeatDTO {
     private SeatClass type;
     private SeatStatus status;
     private BigDecimal price;
-    private String flightId;
+    private String idFlight;
 
-    public SeatDTO(String id, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String flightId) {
+    public SeatDTO(String id, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
         this.id = id;
         this.number = number;
         this.row = row;
@@ -23,7 +23,7 @@ public class SeatDTO {
         this.type = type;
         this.status = status;
         this.price = price;
-        this.flightId = flightId;
+        this.idFlight = idFlight;
     }
 
     public String getId() {
@@ -82,11 +82,11 @@ public class SeatDTO {
         this.price = price;
     }
 
-    public String getFlightId() {
-        return flightId;
+    public String getIdFlight() {
+        return idFlight;
     }
 
-    public void setFlightId(String flightId) {
-        this.flightId = flightId;
+    public void setIdFlight(String idFlight) {
+        this.idFlight = idFlight;
     }
 }

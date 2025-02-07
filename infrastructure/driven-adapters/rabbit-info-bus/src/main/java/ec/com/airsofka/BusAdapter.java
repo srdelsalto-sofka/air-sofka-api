@@ -1,8 +1,9 @@
 package ec.com.airsofka;
 
+import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
+import ec.com.airsofka.config.RabbitProperties;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.generics.domain.DomainEvent;
-import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -26,7 +27,6 @@ public class BusAdapter implements BusEvent {
 
     @Override
     public void sendEventBookingCreated(Mono<DomainEvent> event) {
-        System.out.println("Sending eventBookingCreated");
         event.subscribe(
                 domainEvent -> rabbitTemplate.convertAndSend(
                         envProperties.getBookingExchange(), envProperties.getBookingRoutingKey(),
@@ -47,7 +47,7 @@ public class BusAdapter implements BusEvent {
     public void sendEventUserCreated(Mono<DomainEvent> event) {
         event.subscribe(
                 domainEvent -> rabbitTemplate.convertAndSend(
-                        envProperties.getUserCreatedExchange(),envProperties.getUserCreatedRoutingKey(),
+                        envProperties.getUserCreatedExchange(), envProperties.getUserCreatedRoutingKey(),
                         domainEvent
                 )
         );
@@ -59,13 +59,52 @@ public class BusAdapter implements BusEvent {
             rabbitTemplate.convertAndSend(envProperties.getUserUpdatedExchange(), envProperties.getUserUpdatedRoutingKey(), domainEvent);
         });
     }
-    
+
     public void sendEventPlaneCreated(Mono<DomainEvent> event) {
         event.subscribe(
-                domainEvent-> rabbitTemplate.convertAndSend(
-                        envProperties.getPlaneCreatedExchange(),envProperties.getPlaneCreatedRoutingKey(),
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getPlaneCreatedExchange(), envProperties.getPlaneCreatedRoutingKey(),
                         domainEvent
                 )
+        );
+    }
+
+    @Override
+    public void sendEventSeatReserved(Mono<DomainEvent> event) {
+        event.subscribe(domainEvent -> {
+            rabbitTemplate.convertAndSend(envProperties.getSeatReservedExchange(), envProperties.getSeatReservedRoutingKey(), domainEvent);
+        });
+    }
+
+    @Override
+    public void sendEventMaintenanceCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getMaintenanceExchange(), envProperties.getMaintenanceRoutingKey(),
+                        domainEvent
+                )
+        );
+    }
+
+    @Override
+    public void sendEventPlaneUpdated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getPlaneUpdatedExchange(), envProperties.getPlaneUpdatedRoutingKey(),
+                        domainEvent
+                )
+        );
+    }
+
+    @Override
+    public void sendEventSeatListCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent -> {
+                    rabbitTemplate.convertAndSend(
+                            envProperties.getSeatCreatedExchange(), envProperties.getSeatCreatedRoutingKey(),
+                            domainEvent
+                    );
+                }
         );
     }
 

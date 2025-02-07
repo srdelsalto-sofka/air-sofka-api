@@ -1,7 +1,5 @@
 package ec.com.airsofka.config;
 
-import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
-
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -108,6 +106,74 @@ public class RabbitConfig {
     }
 
     @Bean
+    public TopicExchange maintenanceExchange() {
+        System.out.println(envProperties.getMaintenanceExchange());
+        return new TopicExchange(envProperties.getMaintenanceExchange(), true, false);
+    }
+
+    @Bean
+    public Queue maintenanceQueue() {
+        return new Queue(envProperties.getMaintenanceQueue(), true);
+    }
+
+    @Bean
+    public Binding maintenanceBinding() {
+        return BindingBuilder.bind(maintenanceQueue())
+                .to(maintenanceExchange())
+                .with(envProperties.getMaintenanceRoutingKey());
+    }
+
+    @Bean
+    public TopicExchange planeUpdatedExchange() {
+        return new TopicExchange(envProperties.getPlaneUpdatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue planeUpdatedQueue() {
+        return new Queue(envProperties.getPlaneUpdatedQueue(), true);
+    }
+
+    @Bean
+    public Binding planeUpdatedBinding() {
+        return BindingBuilder.bind(planeUpdatedQueue())
+                .to(planeUpdatedExchange())
+                .with(envProperties.getPlaneCreatedRoutingKey());
+    }
+
+    @Bean
+    public TopicExchange seatCreatedExchange() {
+        return new TopicExchange(envProperties.getSeatCreatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue seatCreatedQueue() {
+        return new Queue(envProperties.getSeatCreatedQueue(), true);
+    }
+
+    @Bean
+    public Binding seatCreatedBinding() {
+        return BindingBuilder.bind(seatCreatedQueue())
+                .to(seatCreatedExchange())
+                .with(envProperties.getSeatCreatedRoutingKey());
+    }
+
+    public TopicExchange seatReservedExchange() {
+        return new TopicExchange(envProperties.getSeatReservedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue seatReservedQueue() {
+        return new Queue(envProperties.getSeatReservedQueue(), true);
+    }
+
+    @Bean
+    public Binding seatReservedBinding() {
+        return BindingBuilder.bind(seatReservedQueue())
+                .to(seatReservedExchange())
+                .with(envProperties.getSeatReservedRoutingKey());
+    }
+
+    @Bean
     public TopicExchange emailExchange() {
         return new TopicExchange(envProperties.getEmailExchange(), true, false);
     }
@@ -194,10 +260,26 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(userUpdatedExchange());
             amqpAdmin.declareQueue(userUpdatedQueue());
             amqpAdmin.declareBinding(userUpdatedBinding());
-            
+
             amqpAdmin.declareExchange(planeCreatedExchange());
             amqpAdmin.declareQueue(planeCreatedQueue());
             amqpAdmin.declareBinding(planeCreatedBinding());
+
+            amqpAdmin.declareExchange(maintenanceExchange());
+            amqpAdmin.declareQueue(maintenanceQueue());
+            amqpAdmin.declareBinding(maintenanceBinding());
+
+            amqpAdmin.declareExchange(planeUpdatedExchange());
+            amqpAdmin.declareQueue(planeUpdatedQueue());
+            amqpAdmin.declareBinding(planeUpdatedBinding());
+
+            amqpAdmin.declareExchange(seatCreatedExchange());
+            amqpAdmin.declareQueue(seatCreatedQueue());
+            amqpAdmin.declareBinding(seatCreatedBinding());
+
+            amqpAdmin.declareExchange(seatReservedExchange());
+            amqpAdmin.declareQueue(seatReservedQueue());
+            amqpAdmin.declareBinding(seatReservedBinding());
 
             amqpAdmin.declareExchange(emailExchange());
             amqpAdmin.declareQueue(emailQueue());

@@ -42,6 +42,14 @@ public class EventMongoAdapter implements IEventStore {
     }
 
     @Override
+    public Flux<DomainEvent> getEventsByAggregateId(String aggregateId) {
+        return repository.findByAggregateId(aggregateId)
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper, aggregateId))
+                .sort(Comparator.comparing(DomainEvent::getVersion)
+                        .thenComparing(DomainEvent::getWhen));
+    }
+
+    @Override
     public Flux<DomainEvent> findAggregate(String aggregateId, String aggregate) {
         return repository.findAllByAggregateId(aggregateId)
                 .map(eventEntity -> eventEntity.deserializeEvent(mapper, aggregate))
@@ -59,7 +67,7 @@ public class EventMongoAdapter implements IEventStore {
 
     @Override
     public Flux<DomainEvent> findAllAggregateByEvent(String aggregate, String eventType) {
-        return repository.findAllByAggregateRootNameAndEventType(aggregate, eventType)
+        return repository.findAllByAggregateRootNameAndEventType(aggregate.toLowerCase(), eventType)
                 .map(eventEntity -> eventEntity.deserializeEvent(mapper, aggregate))
                 .sort(Comparator.comparing(DomainEvent::getVersion)
                         .thenComparing(DomainEvent::getWhen));
