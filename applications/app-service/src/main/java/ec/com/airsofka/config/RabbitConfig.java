@@ -143,6 +143,23 @@ public class RabbitConfig {
     }
 
     @Bean
+    public TopicExchange seatCreatedExchange() {
+        return new TopicExchange(envProperties.getSeatCreatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue seatCreatedQueue() {
+        return new Queue(envProperties.getSeatCreatedQueue(), true);
+    }
+
+    @Bean
+    public Binding seatCreatedBinding() {
+        return BindingBuilder.bind(seatCreatedQueue())
+                .to(seatCreatedExchange())
+                .with(envProperties.getSeatCreatedRoutingKey());
+    }
+
+    @Bean
     public ApplicationListener<ApplicationReadyEvent> initializeBeans(AmqpAdmin amqpAdmin) {
         return event -> {
             amqpAdmin.declareExchange(bookingExchange());
@@ -173,6 +190,11 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(planeUpdatedExchange());
             amqpAdmin.declareQueue(planeUpdatedQueue());
             amqpAdmin.declareBinding(planeUpdatedBinding());
+
+            amqpAdmin.declareExchange(seatCreatedExchange());
+            amqpAdmin.declareQueue(seatCreatedQueue());
+            amqpAdmin.declareBinding(seatCreatedBinding());
+
         };
     }
 

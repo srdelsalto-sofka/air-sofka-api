@@ -3,6 +3,7 @@ package ec.com.airsofka;
 import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.auth.events.UserUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
+import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneUpdated;
@@ -203,5 +204,13 @@ public class BusListener implements BusEventListener {
         );
 
         planeSavedViewUseCase.accept(planeDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getSeatCreatedQueue()}")
+    public void receiveSeatCreated(DomainEvent seatCreated) {
+        SeatListCreated seats = (SeatListCreated) seatCreated;
+
+
     }
 }
