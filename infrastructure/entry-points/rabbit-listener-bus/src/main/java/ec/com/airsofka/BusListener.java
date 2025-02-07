@@ -251,7 +251,7 @@ public class BusListener implements BusEventListener {
         seatListSavedViewUseCase.accept(seatDTO);
 
     }
-}
+
 
     @Override
     @RabbitListener(queues = "#{rabbitProperties.getEmailQueue()}")
