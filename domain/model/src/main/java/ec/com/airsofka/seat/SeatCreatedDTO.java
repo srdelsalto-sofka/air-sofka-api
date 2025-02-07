@@ -16,6 +16,9 @@ public class SeatCreatedDTO {
     private String idFlight;
 
 
+    public SeatCreatedDTO() {
+    }
+
     public SeatCreatedDTO(String id, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
         this.id = id;
         this.number = number;
@@ -26,7 +29,6 @@ public class SeatCreatedDTO {
         this.price = price;
         this.idFlight = idFlight;
     }
-
     public SeatCreatedDTO(String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
         this.id = UUID.randomUUID().toString();
         this.number = number;

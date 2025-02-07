@@ -7,6 +7,7 @@ import ec.com.airsofka.flight.queries.responses.FlightResponse;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
+import ec.com.airsofka.seat.SeatData;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -27,26 +28,19 @@ public class CreateFlightUseCase implements IUseCaseExecute<CreateFlightCommand,
 
         flightOperation.createFlight(cmd.getOrigin(), cmd.getDestination(), cmd.getDeparture(), cmd.getArrival(), cmd.getPrice(), cmd.getIdPlane());
 
-        /*flightOperation.createSeatList(
-
-                 List.of(
-                        new SeatCreatedDTO("A1", 1, "A", SeatClass.ECONOMY, SeatStatus.AVAILABLE, new BigDecimal("150.00"), "FL123"),
-                        new SeatCreatedDTO( "A2", 1, "B", SeatClass.ECONOMY, SeatStatus.OCCUPIED, new BigDecimal("150.00"), "FL123"),
-                        new SeatCreatedDTO( "A3", 1, "C", SeatClass.ECONOMY, SeatStatus.AVAILABLE, new BigDecimal("150.00"), "FL123"),
-                        new SeatCreatedDTO( "B1", 2, "A", SeatClass.BUSINESS, SeatStatus.AVAILABLE, new BigDecimal("300.00"), "FL456"),
-                        new SeatCreatedDTO( "B2", 2, "B", SeatClass.BUSINESS, SeatStatus.OCCUPIED, new BigDecimal("300.00"), "FL456"),
-                        new SeatCreatedDTO( "C1", 3, "A", SeatClass.FIRST, SeatStatus.AVAILABLE, new BigDecimal("500.00"), "FL789"),
-                        new SeatCreatedDTO( "C2", 3, "B", SeatClass.FIRST, SeatStatus.OCCUPIED, new BigDecimal("500.00"), "FL789")
-                )
-        );
-
-        System.out.println(flightOperation.getSeatList().get(1).getIdFlight());*/
-
         flightOperation.getUncommittedEvents()
                 .stream()
                 .map(repository::save)
                 .forEach(busEvent::sendEventFlightCreated);
+        flightOperation.markEventsAsCommitted();
 
+
+        flightOperation.createSeatList(SeatData.getSeatList(flightOperation.getFlight().getId().getValue()));
+
+        flightOperation.getUncommittedEvents()
+                .stream()
+                .map(repository::save)
+                .forEach(busEvent::sendEventSeatListCreated);
         flightOperation.markEventsAsCommitted();
 
         Flight newFlight = flightOperation.getFlight();

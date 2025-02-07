@@ -9,5 +9,6 @@ dependencies {
     implementation project(':rabbit-info-bus')
     implementation project(':email')
     implementation project(':app-config')
+    implementation project(':app-security')
 
 }
