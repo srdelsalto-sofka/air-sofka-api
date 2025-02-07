@@ -5,7 +5,7 @@ import ec.com.airsofka.seat.commands.UpdateSeatStatusCommand;
 import ec.com.airsofka.seat.commands.usecases.UpdateSeatStatusUseCase;
 import ec.com.airsofka.seat.queries.usecases.GetSeatsByFlightIdUseCase;
 import ec.com.airsofka.seat.queries.usecases.SeatListSavedViewUseCase;
-import ec.com.airsofka.validator.RequestValidator;
+import ec.com.airsofka.validator.RequestValidatorShared;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -15,11 +15,11 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class SeatHandler {
-    private final RequestValidator requestValidator;
+    private final RequestValidatorShared requestValidator;
     private final GetSeatsByFlightIdUseCase getSeatsByFlightIdUseCase;
     private final UpdateSeatStatusUseCase updateSeatStatusUseCase;
 
-    public SeatHandler(RequestValidator requestValidator, GetSeatsByFlightIdUseCase getSeatsByFlightIdUseCase, UpdateSeatStatusUseCase updateSeatStatusUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase ) {
+    public SeatHandler(RequestValidatorShared requestValidator, GetSeatsByFlightIdUseCase getSeatsByFlightIdUseCase, UpdateSeatStatusUseCase updateSeatStatusUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase ) {
         this.requestValidator = requestValidator;
         this.getSeatsByFlightIdUseCase = getSeatsByFlightIdUseCase;
         this.updateSeatStatusUseCase = updateSeatStatusUseCase;
@@ -28,7 +28,7 @@ public class SeatHandler {
     public Mono<ServerResponse> update(ServerRequest request) {
        // return request.bodyToMono(SeatRequestDTO.class)
         return request.bodyToMono(UpdateSeatStatusCommand.class)
-                .doOnNext(requestValidator::validate)
+                //.flatMap(requestValidator::validate)
                // .map(SeatMapper::toCommand)
                 .flatMap(updateSeatStatusUseCase::execute)
                 .flatMap(seatResponse ->
