@@ -1,8 +1,8 @@
 package ec.com.airsofka;
 
+import ec.com.airsofka.config.RabbitProperties;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.generics.domain.DomainEvent;
-import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
