@@ -1,7 +1,5 @@
 package ec.com.airsofka.config;
 
-import ec.com.airsofka.rabbit.rabbit.RabbitProperties;
-
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
