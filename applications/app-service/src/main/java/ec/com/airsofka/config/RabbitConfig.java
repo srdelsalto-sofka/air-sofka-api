@@ -155,6 +155,8 @@ public class RabbitConfig {
         return BindingBuilder.bind(seatCreatedQueue())
                 .to(seatCreatedExchange())
                 .with(envProperties.getSeatCreatedRoutingKey());
+    }
+
     public TopicExchange seatReservedExchange() {
         return new TopicExchange(envProperties.getSeatReservedExchange(), true, false);
     }

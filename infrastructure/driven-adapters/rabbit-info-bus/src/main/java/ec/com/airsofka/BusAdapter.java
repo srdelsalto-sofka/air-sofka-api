@@ -1,5 +1,6 @@
 package ec.com.airsofka;
 
+import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
 import ec.com.airsofka.config.RabbitProperties;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.generics.domain.DomainEvent;
@@ -89,10 +90,12 @@ public class BusAdapter implements BusEvent {
     @Override
     public void sendEventSeatListCreated(Mono<DomainEvent> event) {
         event.subscribe(
-                domainEvent -> rabbitTemplate.convertAndSend(
-                        envProperties.getSeatCreatedExchange(), envProperties.getSeatCreatedRoutingKey(),
-                        domainEvent
-                )
+                domainEvent -> {
+                    rabbitTemplate.convertAndSend(
+                            envProperties.getSeatCreatedExchange(), envProperties.getSeatCreatedRoutingKey(),
+                            domainEvent
+                    );
+                }
         );
     }
 
