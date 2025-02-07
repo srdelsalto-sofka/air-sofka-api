@@ -26,6 +26,7 @@ public class BusAdapter implements BusEvent {
 
     @Override
     public void sendEventBookingCreated(Mono<DomainEvent> event) {
+        System.out.println("Sending eventBookingCreated");
         event.subscribe(
                 domainEvent -> rabbitTemplate.convertAndSend(
                         envProperties.getBookingExchange(), envProperties.getBookingRoutingKey(),
@@ -66,6 +67,39 @@ public class BusAdapter implements BusEvent {
                         domainEvent
                 )
         );
+    }
+
+    @Override
+    public void sendEventBillingCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent-> rabbitTemplate.convertAndSend(
+                        envProperties.getBillingExchange(),envProperties.getBillingRoutingKey(),
+                        domainEvent
+                )
+        );
+
+    }
+
+    @Override
+    public void sendEventContactCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent-> rabbitTemplate.convertAndSend(
+                        envProperties.getContactExchange(),envProperties.getContactRoutingKey(),
+                        domainEvent
+                )
+        );
+
+    }
+
+    @Override
+    public void sendEventPassengerCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent-> rabbitTemplate.convertAndSend(
+                        envProperties.getPassengerExchange(),envProperties.getPassengerRoutingKey(),
+                        domainEvent
+                )
+        );
+
     }
 
 }

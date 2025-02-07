@@ -90,6 +90,7 @@ public class RabbitConfig {
                 .with(envProperties.getUserUpdatedRoutingKey());
     }
 
+    @Bean
     public TopicExchange planeCreatedExchange() {
         return new TopicExchange(envProperties.getPlaneCreatedExchange(), true, false);
     }
@@ -124,6 +125,57 @@ public class RabbitConfig {
     }
 
     @Bean
+    public TopicExchange billingExchange() {
+        return new TopicExchange(envProperties.getBillingExchange(), true, false);
+    }
+
+    @Bean
+    public Queue billingQueue() {
+        return new Queue(envProperties.getBillingQueue(), true);
+    }
+
+    @Bean
+    public Binding billingBinding() {
+        return BindingBuilder.bind(billingQueue())
+                .to(billingExchange())
+                .with(envProperties.getBillingRoutingKey());
+    }
+
+    @Bean
+    public TopicExchange contactExchange() {
+        return new TopicExchange(envProperties.getContactExchange(), true, false);
+    }
+
+    @Bean
+    public Queue contactQueue() {
+        return new Queue(envProperties.getContactQueue(), true);
+    }
+
+    @Bean
+    public Binding contactBinding() {
+        return BindingBuilder.bind(contactQueue())
+                .to(contactExchange())
+                .with(envProperties.getContactRoutingKey());
+    }
+
+    @Bean
+    public TopicExchange passengerExchange() {
+        return new TopicExchange(envProperties.getPassengerExchange(), true, false);
+    }
+
+    @Bean
+    public Queue passengerQueue() {
+        return new Queue(envProperties.getPassengerQueue(), true);
+    }
+
+    @Bean
+    public Binding passengerBinding() {
+        return BindingBuilder.bind(passengerQueue())
+                .to(passengerExchange())
+                .with(envProperties.getPassengerRoutingKey());
+    }
+
+    @Bean
     public ApplicationListener<ApplicationReadyEvent> initializeBeans(AmqpAdmin amqpAdmin) {
         return event -> {
             amqpAdmin.declareExchange(bookingExchange());
@@ -150,6 +202,18 @@ public class RabbitConfig {
             amqpAdmin.declareExchange(emailExchange());
             amqpAdmin.declareQueue(emailQueue());
             amqpAdmin.declareBinding(emailBinding());
+
+            amqpAdmin.declareExchange(billingExchange());
+            amqpAdmin.declareQueue(billingQueue());
+            amqpAdmin.declareBinding(billingBinding());
+
+            amqpAdmin.declareExchange(contactExchange());
+            amqpAdmin.declareQueue(contactQueue());
+            amqpAdmin.declareBinding(contactBinding());
+
+            amqpAdmin.declareExchange(passengerExchange());
+            amqpAdmin.declareQueue(passengerQueue());
+            amqpAdmin.declareBinding(passengerBinding());
         };
     }
 

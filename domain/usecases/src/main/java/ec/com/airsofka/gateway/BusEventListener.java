@@ -12,5 +12,8 @@ public interface BusEventListener {
     void receiveUserUpdated(DomainEvent userUpdated);
 
     void receiveMailEvent(DomainEvent mailEvent);
+    void receiveBillingEvent(DomainEvent mailEvent);
+    void receiveContact(DomainEvent mailEvent);
+    void receivePassenger(DomainEvent mailEvent);
 
 }

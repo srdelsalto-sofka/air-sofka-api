@@ -1,17 +1,17 @@
 package ec.com.airsofka.booking.queries.responses;
 
 public class BookingResponse {
-    String status;
+    String message;
 
-    public BookingResponse(String status) {
-        this.status = status;
+    public BookingResponse(String message) {
+        this.message = message;
     }
 
     public String getStatus() {
-        return status;
+        return message;
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.message = message;
     }
 }

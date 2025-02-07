@@ -1,25 +1,35 @@
 package ec.com.airsofka.aggregate.reservation;
 
 
+import ec.com.airsofka.aggregate.reservation.events.BillingCreated;
+import ec.com.airsofka.aggregate.reservation.events.BookingCreated;
+import ec.com.airsofka.aggregate.reservation.events.ContactCreated;
+import ec.com.airsofka.aggregate.reservation.events.PassengerCreated;
 import ec.com.airsofka.aggregate.reservation.values.ReservationId;
 import ec.com.airsofka.billing.Billing;
+import ec.com.airsofka.billing.values.BillingId;
 import ec.com.airsofka.booking.Booking;
+import ec.com.airsofka.booking.values.BookingId;
 import ec.com.airsofka.contact.Contact;
+import ec.com.airsofka.contact.values.ContactId;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.utils.AggregateRoot;
 import ec.com.airsofka.passenger.Passenger;
+import ec.com.airsofka.passenger.PassengerCreatedDTO;
+import ec.com.airsofka.passenger.values.PassengerId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Reservation  extends AggregateRoot<ReservationId> {
-
+public class Reservation extends AggregateRoot<ReservationId> {
 
 
     private Booking booking;
     private Contact contact;
-    private List<Passenger> passengers;
+    private List<Passenger> passengers = new ArrayList<>();
     private Billing billing;
 
     public Reservation() {
@@ -33,26 +43,54 @@ public class Reservation  extends AggregateRoot<ReservationId> {
     }
 
 
+    public void createBooking(String status, BigDecimal totalPrice, BigDecimal discount, String flightId, String userId) {
+        addEvent(new BookingCreated(
+                        new BookingId().getValue(),
+                        status,
+                        totalPrice,
+                        discount,
+                        flightId,
+                        userId
+                )
+        ).apply();
+    }
 
-    public void createReservation(String status) {
+    public void createBilling(String bookingId, String paymentMethod, BigDecimal totalPrice) {
+        addEvent(new BillingCreated(
+                        new BillingId().getValue(),
+                        paymentMethod,
+                        totalPrice,
+                        bookingId
+                )
+        ).apply();
 
     }
 
-    public void createBooking() {
+    public void createContact(String bookingId, String email, String prefix, String phone) {
+        addEvent(new ContactCreated(
+                        new ContactId().getValue(),
+                        email,
+                        prefix,
+                        phone,
+                        bookingId
+                )
 
+        ).apply();
     }
 
-    public void createBilling() {
-
+    public void createPassengers(String bookingId, List<PassengerCreatedDTO> passengers) {
+        passengers.forEach(passenger ->
+                addEvent(new PassengerCreated(
+                                new PassengerId().getValue(),
+                                passenger.getTitle(),
+                                passenger.getName(),
+                                passenger.getLastName(),
+                                passenger.getPassengerType(),
+                                passenger.getSeatId(),
+                                bookingId
+                        )
+                ).apply());
     }
-
-    public void createContact() {
-    }
-
-    public void createPassengers() {
-    }
-
-
 
 
     public Booking getBooking() {
