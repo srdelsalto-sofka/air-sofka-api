@@ -95,8 +95,6 @@ public class BusListener implements BusEventListener {
                 booking.getUserId()
         );
         bookingSavedViewUseCase.accept(bookingDTO);
-
-
     }
 
     @Override

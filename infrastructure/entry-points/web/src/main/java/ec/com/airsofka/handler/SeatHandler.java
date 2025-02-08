@@ -3,7 +3,7 @@ package ec.com.airsofka.handler;
 import ec.com.airsofka.generics.utils.QueryResponse;
 import ec.com.airsofka.seat.commands.UpdateSeatStatusCommand;
 import ec.com.airsofka.seat.commands.usecases.UpdateSeatStatusUseCase;
-import ec.com.airsofka.seat.queries.usecases.GetSeatsByFlightIdUseCase;
+import ec.com.airsofka.seat.queries.usecases.GetSeatsByFlightIdViewUseCase;
 import ec.com.airsofka.seat.queries.usecases.SeatListSavedViewUseCase;
 import ec.com.airsofka.validator.RequestValidatorShared;
 import org.springframework.http.HttpStatus;
@@ -16,12 +16,12 @@ import reactor.core.publisher.Mono;
 @Component
 public class SeatHandler {
     private final RequestValidatorShared requestValidator;
-    private final GetSeatsByFlightIdUseCase getSeatsByFlightIdUseCase;
+    private final GetSeatsByFlightIdViewUseCase getSeatsByFlightIdViewUseCase;
     private final UpdateSeatStatusUseCase updateSeatStatusUseCase;
 
-    public SeatHandler(RequestValidatorShared requestValidator, GetSeatsByFlightIdUseCase getSeatsByFlightIdUseCase, UpdateSeatStatusUseCase updateSeatStatusUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase ) {
+    public SeatHandler(RequestValidatorShared requestValidator, GetSeatsByFlightIdViewUseCase getSeatsByFlightIdViewUseCase, UpdateSeatStatusUseCase updateSeatStatusUseCase, SeatListSavedViewUseCase seatListSavedViewUseCase ) {
         this.requestValidator = requestValidator;
-        this.getSeatsByFlightIdUseCase = getSeatsByFlightIdUseCase;
+        this.getSeatsByFlightIdViewUseCase = getSeatsByFlightIdViewUseCase;
         this.updateSeatStatusUseCase = updateSeatStatusUseCase;
     }
 
@@ -41,7 +41,7 @@ public class SeatHandler {
 
     public Mono<ServerResponse> getAllByFlightId(ServerRequest request) {
         String idFlight = request.pathVariable("idFlight");
-        return getSeatsByFlightIdUseCase.get(idFlight)
+        return getSeatsByFlightIdViewUseCase.get(idFlight)
                 .map(QueryResponse::getMultipleResults)
                 .flatMap(seatResponses ->
                         ServerResponse
