@@ -9,7 +9,6 @@ dependencies {
     implementation project (':rabbit-info-bus')
     implementation project (':serializer')
     implementation project (':shared')
-    implementation project (':security')
     implementation project(':app-config')
     implementation project(':app-security')
     implementation project(':web-auth')

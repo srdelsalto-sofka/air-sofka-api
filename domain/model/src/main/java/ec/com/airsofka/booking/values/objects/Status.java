@@ -3,13 +3,10 @@ package ec.com.airsofka.booking.values.objects;
 import ec.com.airsofka.generics.interfaces.IValueObject;
 
 public class Status implements IValueObject<String> {
-    private  String value;
+    private  final  String value;
 
     private Status(final String value)  {
         this.value = validate(value);
-    }
-
-    public Status() {
     }
 
     public static Status of(final String value) {

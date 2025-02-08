@@ -3,32 +3,40 @@ package ec.com.airsofka;
 import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.auth.events.UserUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
+import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
 import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneUpdated;
+import ec.com.airsofka.aggregate.reservation.events.*;
+import ec.com.airsofka.billing.queries.usecases.BillingSavedViewUseCase;
+import ec.com.airsofka.booking.queries.usecases.BookingSavedViewUseCase;
 import ec.com.airsofka.commands.SendEmailCommand;
 import ec.com.airsofka.commands.usecases.SendEmailUseCase;
 import ec.com.airsofka.config.RabbitProperties;
+import ec.com.airsofka.contact.queries.usecases.ContactSavedViewUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
+import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.gateway.dto.MaintenanceDTO;
 import ec.com.airsofka.gateway.dto.PlaneDTO;
 import ec.com.airsofka.gateway.dto.SeatDTO;
 import ec.com.airsofka.gateway.dto.UserDTO;
+import ec.com.airsofka.gateway.dto.*;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.maintenance.queries.usecases.MaintenanceSavedViewUseCase;
+import ec.com.airsofka.passenger.PassengerCreatedDTO;
+import ec.com.airsofka.passenger.queries.usecases.PassengerSavedViewUseCase;
 import ec.com.airsofka.plane.queries.usecases.PlaneSavedViewUseCase;
+import ec.com.airsofka.seat.SeatCreatedDTO;
 import ec.com.airsofka.seat.queries.usecases.SeatListSavedViewUseCase;
 import ec.com.airsofka.user.queries.usecases.UserSavedViewUseCase;
 import ec.com.airsofka.user.queries.usecases.UserUpdatedViewUseCase;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class BusListener implements BusEventListener {
@@ -40,6 +48,10 @@ public class BusListener implements BusEventListener {
     private final PlaneSavedViewUseCase planeSavedViewUseCase;
     private final SeatListSavedViewUseCase seatListSavedViewUseCase;
     private final MaintenanceSavedViewUseCase maintenanceSavedViewUseCase;
+    private final BillingSavedViewUseCase billingSavedViewUseCase;
+    private final BookingSavedViewUseCase bookingSavedViewUseCase;
+    private final ContactSavedViewUseCase contactSavedViewUseCase;
+    private final PassengerSavedViewUseCase passengerSavedViewUseCase;
 
     public BusListener(
             RabbitProperties rabbitProperties,
@@ -49,7 +61,11 @@ public class BusListener implements BusEventListener {
             UserUpdatedViewUseCase userUpdatedViewUseCase,
             PlaneSavedViewUseCase planeSavedViewUseCase,
             SeatListSavedViewUseCase seatListSavedViewUseCase,
-            MaintenanceSavedViewUseCase maintenanceSavedViewUseCase
+            MaintenanceSavedViewUseCase maintenanceSavedViewUseCase,
+            BillingSavedViewUseCase billingSavedViewUseCase,
+            BookingSavedViewUseCase bookingSavedViewUseCase,
+            ContactSavedViewUseCase contactSavedViewUseCase,
+            PassengerSavedViewUseCase passengerSavedViewUseCase
     ) {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
@@ -59,44 +75,28 @@ public class BusListener implements BusEventListener {
         this.planeSavedViewUseCase = planeSavedViewUseCase;
         this.seatListSavedViewUseCase = seatListSavedViewUseCase;
         this.maintenanceSavedViewUseCase = maintenanceSavedViewUseCase;
+        this.billingSavedViewUseCase = billingSavedViewUseCase;
+        this.bookingSavedViewUseCase = bookingSavedViewUseCase;
+        this.contactSavedViewUseCase = contactSavedViewUseCase;
+        this.passengerSavedViewUseCase = passengerSavedViewUseCase;
     }
 
     @Override
     @RabbitListener(queues = "#{rabbitProperties.getBookingQueue()}")
-    public void receiveBookingCreated(DomainEvent emailDetails) {
+    public void receiveBookingCreated(DomainEvent event) {
+        System.out.println("Booking created");
+        BookingCreated booking = (BookingCreated) event;
+        BookingDTO bookingDTO = new BookingDTO(
+                booking.getId(),
+                booking.getStatus(),
+                booking.getTotalPrice(),
+                booking.getDiscount(),
+                booking.getFlightId(),
+                booking.getUserId()
+        );
+        bookingSavedViewUseCase.accept(bookingDTO);
 
-        System.out.println("WHEN");
-        System.out.println(emailDetails.getWhen());
 
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("confirmationTitle", "Air-Sofka Booking Confirmation");
-        variables.put("bookingDate", "Sunday, December 10, 2023");
-        variables.put("email", "test@test.com"); //mine
-        variables.put("phoneNumber", "+1345 6789012");
-        variables.put("passengerName", "Mr. James Thompson");
-        variables.put("departureCity", "Los Angeles");
-        variables.put("arrivalCity", "Paris");
-        variables.put("airline", "SkyHigh");
-        variables.put("departureDate", "Thursday, December 27, 2023 07:15");
-        variables.put("arrivalDate", "Sunday, December 30, 2023 10:15");
-        variables.put("flightNumber", "SH1234");
-        variables.put("departureTerminal", "Terminal 2");
-        variables.put("arrivalTerminal", "Terminal 4A");
-        variables.put("ticketPrice", "$150");
-        variables.put("airportTax", "$10");
-        variables.put("additionalCharges", "$65");
-        variables.put("fuelInsurance", "$25");
-        variables.put("bookingFee", "$5");
-        variables.put("totalAmount", "$255");
-        variables.put("keyNotes", "Please bring this confirmation along with an ID.");
-        variables.put("seats", List.of(
-                Map.of("flightClass", "Premium Economy", "seatNumber", "5B", "passengerName", "John Doe"),
-                Map.of("flightClass", "Economy", "seatNumber", "7B", "passengerName", "John Two")
-        ));
-
-        sendEmailUseCase.execute(new SendEmailCommand("qtandres17@gmail.com", variables))
-                .doOnSuccess(value -> System.out.println("Send email result: " + value))
-                .subscribe();
     }
 
     @Override
@@ -212,6 +212,26 @@ public class BusListener implements BusEventListener {
     }
 
     @Override
+    @RabbitListener(queues = "#{rabbitProperties.getSeatCreatedQueue()}")
+    public void receiveSeatCreated(DomainEvent seatCreated) {
+        SeatListCreated seats = (SeatListCreated) seatCreated;
+
+        for (SeatCreatedDTO seat : seats.getSeats()) {
+            SeatDTO seatDTO = new SeatDTO(
+                    seat.getId(),
+                    seat.getNumber(),
+                    seat.getRow(),
+                    seat.getColumn(),
+                    seat.getType(),
+                    seat.getStatus(),
+                    seat.getPrice(),
+                    seat.getIdFlight()
+            );
+
+            seatListSavedViewUseCase.accept(seatDTO);
+        }
+    }
+
     @RabbitListener(queues = "#{rabbitProperties.getSeatReservedQueue()}")
     public void receiveSeatReserved(DomainEvent seatListUpdated) {
         SeatReserved seat = (SeatReserved) seatListUpdated;
@@ -230,4 +250,69 @@ public class BusListener implements BusEventListener {
         seatListSavedViewUseCase.accept(seatDTO);
 
     }
+
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getEmailQueue()}")
+    public void receiveMailEvent(EmailData emailData) {
+        sendEmailUseCase.execute(new SendEmailCommand(emailData.getEmail(), emailData))
+                .doOnSuccess(value -> System.out.println("Email sent to " + emailData.getEmail()))
+                .subscribe();
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getBillingQueue()}")
+    public void receiveBillingEvent(DomainEvent event) {
+        BillingCreated billing = (BillingCreated) event;
+        BillingDTO billingDTO = new BillingDTO(
+                billing.getId(),
+                billing.getPaymentMethod(),
+                billing.getTotalPrice(),
+                billing.getBookingId()
+        );
+
+        billingSavedViewUseCase.accept(billingDTO);
+
+
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getContactQueue()}")
+    public void receiveContact(DomainEvent event) {
+        ContactCreated contact = (ContactCreated) event;
+        ContactDTO contactDTO = new ContactDTO(
+                contact.getId(),
+                contact.getEmail(),
+                contact.getPrefix(),
+                contact.getPhone(),
+                contact.getBookingId()
+        );
+        contactSavedViewUseCase.accept(contactDTO);
+
+
+    }
+
+    @Override
+    @RabbitListener(queues = "#{rabbitProperties.getPassengerQueue()}")
+    public void receivePassenger(DomainEvent event) {
+        PassengerListCreated passengers = (PassengerListCreated) event;
+        for (PassengerCreatedDTO passenger : passengers.getPassengers()) {
+            PassengerDTO passengerDTO = new PassengerDTO(
+                    passenger.getId(),
+                    passenger.getTitle(),
+                    passenger.getName(),
+                    passenger.getLastName(),
+                    passenger.getPassengerType(),
+                    passenger.getSeatId(),
+                    passenger.getBookingId()
+            );
+            passengerSavedViewUseCase.accept(passengerDTO);
+
+
+        }
+
+
+    }
+
 }
+

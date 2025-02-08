@@ -4,6 +4,7 @@ dependencies {
     implementation project(':model')
     implementation project(':app-security')
     implementation project(':app-exception')
+    implementation project(':mongo-repository')
 
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'

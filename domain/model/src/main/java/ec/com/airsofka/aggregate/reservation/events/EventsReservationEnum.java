@@ -5,4 +5,5 @@ public enum EventsReservationEnum {
     CONTACT_CREATED,
     BILLING_CREATED,
     PASSENGER_CREATED,
+    PASSENGER_LIST_CREATED,
 }

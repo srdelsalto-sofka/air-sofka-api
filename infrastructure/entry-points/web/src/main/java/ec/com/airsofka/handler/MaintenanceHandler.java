@@ -2,7 +2,7 @@ package ec.com.airsofka.handler;
 
 import ec.com.airsofka.maintenance.commands.CreateMaintenanceCommand;
 import ec.com.airsofka.maintenance.commands.usecases.CreateMaintenanceUseCase;
-import ec.com.airsofka.validator.RequestValidator;
+import ec.com.airsofka.validator.RequestValidatorShared;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -12,10 +12,10 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class MaintenanceHandler {
-    private final RequestValidator requestValidator;
+    private final RequestValidatorShared requestValidator;
     private final CreateMaintenanceUseCase createMaintenanceUseCase;
 
-    public MaintenanceHandler(RequestValidator requestValidator, CreateMaintenanceUseCase createMaintenanceUseCase) {
+    public MaintenanceHandler(RequestValidatorShared requestValidator, CreateMaintenanceUseCase createMaintenanceUseCase) {
         this.requestValidator = requestValidator;
         this.createMaintenanceUseCase = createMaintenanceUseCase;
     }
