@@ -20,10 +20,10 @@ public class MaintenanceCronJob {
     }
 
     public void start() {
-        Flux.interval(Duration.ofMinutes(1))
+        Flux.interval(Duration.ofMinutes(10))
                 .flatMap(ignore -> checkMaintenanceViewUseCase.accept())
-                .doOnNext(result -> LOGGER.info("Mantenimiento verificado"))
-                .doOnError(error -> LOGGER.error("Error ejecutando el cron job de mantenimiento", error))
+                .doOnNext(result -> LOGGER.info("Verified maintenance"))
+                .doOnError(error -> LOGGER.error("Error running maintenance cron job", error))
                 .subscribe();
     }
 }
