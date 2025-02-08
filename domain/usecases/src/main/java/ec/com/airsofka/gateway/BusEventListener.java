@@ -1,6 +1,7 @@
 package ec.com.airsofka.gateway;
 
 
+import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.generics.domain.DomainEvent;
 
 public interface BusEventListener {
@@ -14,4 +15,10 @@ public interface BusEventListener {
     void receiveMaintenanceCreated(DomainEvent maintenanceCreated);
     void receivePlaneUpdated(DomainEvent planeUpdated);
     void receiveSeatCreated(DomainEvent seatCreated);
+
+    void receiveMailEvent(EmailData emailData);
+    void receiveBillingEvent(DomainEvent mailEvent);
+    void receiveContact(DomainEvent mailEvent);
+    void receivePassenger(DomainEvent mailEvent);
+
 }
