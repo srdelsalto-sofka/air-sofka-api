@@ -8,10 +8,7 @@ import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
 import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneCreated;
 import ec.com.airsofka.aggregate.planeManagement.events.PlaneUpdated;
-import ec.com.airsofka.aggregate.reservation.events.BillingCreated;
-import ec.com.airsofka.aggregate.reservation.events.BookingCreated;
-import ec.com.airsofka.aggregate.reservation.events.ContactCreated;
-import ec.com.airsofka.aggregate.reservation.events.PassengerCreated;
+import ec.com.airsofka.aggregate.reservation.events.*;
 import ec.com.airsofka.billing.queries.usecases.BillingSavedViewUseCase;
 import ec.com.airsofka.booking.queries.usecases.BookingSavedViewUseCase;
 import ec.com.airsofka.commands.SendEmailCommand;
@@ -20,6 +17,7 @@ import ec.com.airsofka.config.RabbitProperties;
 import ec.com.airsofka.contact.queries.usecases.ContactSavedViewUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
+import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.gateway.dto.MaintenanceDTO;
 import ec.com.airsofka.gateway.dto.PlaneDTO;
@@ -28,6 +26,7 @@ import ec.com.airsofka.gateway.dto.UserDTO;
 import ec.com.airsofka.gateway.dto.*;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.maintenance.queries.usecases.MaintenanceSavedViewUseCase;
+import ec.com.airsofka.passenger.PassengerCreatedDTO;
 import ec.com.airsofka.passenger.queries.usecases.PassengerSavedViewUseCase;
 import ec.com.airsofka.plane.queries.usecases.PlaneSavedViewUseCase;
 import ec.com.airsofka.seat.SeatCreatedDTO;
@@ -87,7 +86,7 @@ public class BusListener implements BusEventListener {
     public void receiveBookingCreated(DomainEvent event) {
         System.out.println("Booking created");
         BookingCreated booking = (BookingCreated) event;
-        BookingDTO bookingDTO  =  new BookingDTO(
+        BookingDTO bookingDTO = new BookingDTO(
                 booking.getId(),
                 booking.getStatus(),
                 booking.getTotalPrice(),
@@ -255,10 +254,10 @@ public class BusListener implements BusEventListener {
 
     @Override
     @RabbitListener(queues = "#{rabbitProperties.getEmailQueue()}")
-    public void receiveMailEvent(DomainEvent mailEvent) {
-        /*sendEmailUseCase.execute(new SendEmailCommand("jair.quinonez@sofka.com.co", null))
-                .doOnSuccess(value -> System.out.println("Send email"))
-                .subscribe();*/
+    public void receiveMailEvent(EmailData emailData) {
+        sendEmailUseCase.execute(new SendEmailCommand(emailData.getEmail(), emailData))
+                .doOnSuccess(value -> System.out.println("Email sent to " + emailData.getEmail()))
+                .subscribe();
     }
 
     @Override
@@ -296,17 +295,21 @@ public class BusListener implements BusEventListener {
     @Override
     @RabbitListener(queues = "#{rabbitProperties.getPassengerQueue()}")
     public void receivePassenger(DomainEvent event) {
-        PassengerCreated passenger = (PassengerCreated) event;
-        PassengerDTO passengerDTO = new PassengerDTO(
-                passenger.getId(),
-                passenger.getTitle(),
-                passenger.getName(),
-                passenger.getLastName(),
-                passenger.getPassengerType(),
-                passenger.getSeatId(),
-                passenger.getBookingId()
-        );
-        passengerSavedViewUseCase.accept(passengerDTO);
+        PassengerListCreated passengers = (PassengerListCreated) event;
+        for (PassengerCreatedDTO passenger : passengers.getPassengers()) {
+            PassengerDTO passengerDTO = new PassengerDTO(
+                    passenger.getId(),
+                    passenger.getTitle(),
+                    passenger.getName(),
+                    passenger.getLastName(),
+                    passenger.getPassengerType(),
+                    passenger.getSeatId(),
+                    passenger.getBookingId()
+            );
+            passengerSavedViewUseCase.accept(passengerDTO);
+
+
+        }
 
 
     }

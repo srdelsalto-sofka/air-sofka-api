@@ -2,7 +2,8 @@ package ec.com.airsofka.commands.usecases;
 
 
 import ec.com.airsofka.commands.SendEmailCommand;
-import ec.com.airsofka.data.Seat;
+import ec.com.airsofka.data.SeatRecord;
+import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.queries.responses.EmailResponse;
 import jakarta.mail.MessagingException;
@@ -13,10 +14,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class SendEmailUseCase implements IUseCaseExecute<SendEmailCommand, EmailResponse> {
 
@@ -37,7 +37,7 @@ public class SendEmailUseCase implements IUseCaseExecute<SendEmailCommand, Email
 
 
                 Context context = new Context();
-                context.setVariables(buildVariables());
+                context.setVariables(buildVariables(cmd.getEmailData()));
                 String htmlContent = templateEngine.process("booking-confirmation", context);
 
                 helper.setTo(cmd.getTo());
@@ -51,35 +51,41 @@ public class SendEmailUseCase implements IUseCaseExecute<SendEmailCommand, Email
         });
     }
 
-    private Map<String, Object> buildVariables(){
+    private Map<String, Object> buildVariables(EmailData emailData) {
         Map<String, Object> variables = new HashMap<>();
+        LocalDate today = LocalDate.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy", Locale.ENGLISH);
+        String formattedDate = today.format(formatter);
+
         variables.put("confirmationTitle", "Booking Confirmation");
-        variables.put("bookingDate", "Sunday, December 10, 2023");
-        variables.put("email", "test@test.com");
-        variables.put("phoneNumber", "+1345 6789012");
-        variables.put("passengerName", "Mr. James Thompson");
-        variables.put("departureCity", "Los Angeles");
-        variables.put("arrivalCity", "Paris");
-        variables.put("airline", "SkyHigh");
-        variables.put("departureDate", "Thursday, December 27, 2023 07:15");
-        variables.put("arrivalDate", "Sunday, December 30, 2023 10:15");
+        variables.put("bookingDate", formattedDate);
+
+        variables.put("email", emailData.getEmail());
+        variables.put("phoneNumber", emailData.getPhoneNumber());
+        variables.put("passengerName", emailData.getPassengerName());
+        variables.put("departureCity", emailData.getDepartureCity());
+        variables.put("arrivalCity", emailData.getArrivalCity());
+        variables.put("airline", "Air-Sofka");
+        variables.put("departureDate", emailData.getDepartureDate());
+        variables.put("arrivalDate", emailData.getArrivalDate());
         variables.put("flightNumber", "SH1234");
-        variables.put("departureTerminal", "Terminal 2");
-        variables.put("arrivalTerminal", "Terminal 4A");
         //Taxes
-        variables.put("ticketPrice", "$150");  //calculate
-        variables.put("airportTax", "$10");
-        variables.put("additionalCharges", "$65");
-        variables.put("fuelInsurance", "$25");
-        variables.put("bookingFee", "$5");
-        variables.put("totalAmount", "$255");
+        variables.put("ticketPrice", emailData.getTicketPrice());
+        variables.put("airportTax", emailData.getAirportTax());
+        variables.put("additionalCharges", emailData.getAdditionalCharges());
+        variables.put("fuelInsurance", emailData.getFuelInsurance());
+        variables.put("bookingFee", emailData.getBookingFee());
+        variables.put("totalAmount", emailData.getTotalAmount());
 
-        variables.put("keyNotes", "Please bring this confirmation along with an ID.");
+        variables.put("keyNotes", emailData.getKeyNotes());
 
-        List<Seat> availableSeats = new ArrayList<>();
-        availableSeats.add(new Seat("Premium Economy", "5B", "John Doe"));
-        availableSeats.add(new Seat("Economy", "7B", "John Two"));
-        availableSeats.add(new Seat("Business", "1A", "Alice Smith"));
+        List<SeatRecord> availableSeats = emailData.getPassengers()
+                .stream()
+                .map(passenger  -> new SeatRecord(
+                        "TEST CLASS", passenger.getSeatId(),passenger.getPassengerName()
+                ))
+                .toList();
 
         List<Map<String, String>> seats = availableSeats.stream()
                 .map(seat -> {

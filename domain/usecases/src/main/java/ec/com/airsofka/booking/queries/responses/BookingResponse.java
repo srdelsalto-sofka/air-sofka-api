@@ -1,17 +1,33 @@
 package ec.com.airsofka.booking.queries.responses;
 
-public class BookingResponse {
-    String message;
+import java.math.BigDecimal;
 
-    public BookingResponse(String message) {
+public class BookingResponse {
+    private final  String message;
+    private final String email;
+    private final String phoneNumber;
+    private final BigDecimal total;
+
+    public BookingResponse(String message, String email, String phoneNumber, BigDecimal total) {
         this.message = message;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.total = total;
     }
 
-    public String getStatus() {
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMessage() {
         return message;
     }
 
-    public void setStatus(String status) {
-        this.message = message;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 }

@@ -1,10 +1,8 @@
 package ec.com.airsofka.aggregate.reservation;
 
 
-import ec.com.airsofka.aggregate.reservation.events.BillingCreated;
-import ec.com.airsofka.aggregate.reservation.events.BookingCreated;
-import ec.com.airsofka.aggregate.reservation.events.ContactCreated;
-import ec.com.airsofka.aggregate.reservation.events.PassengerCreated;
+import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
+import ec.com.airsofka.aggregate.reservation.events.*;
 import ec.com.airsofka.billing.Billing;
 import ec.com.airsofka.billing.values.BillingId;
 import ec.com.airsofka.billing.values.objects.PaymentMethod;
@@ -21,9 +19,16 @@ import ec.com.airsofka.passenger.Passenger;
 import ec.com.airsofka.passenger.values.PassengerId;
 import ec.com.airsofka.passenger.values.objects.LastName;
 import ec.com.airsofka.passenger.values.objects.PassengerType;
+import ec.com.airsofka.seat.Seat;
 import ec.com.airsofka.seat.values.SeatId;
+import ec.com.airsofka.seat.values.objects.Column;
+import ec.com.airsofka.seat.values.objects.Number;
+import ec.com.airsofka.seat.values.objects.Row;
+import ec.com.airsofka.seat.values.objects.Type;
 import ec.com.airsofka.user.values.UserId;
 import ec.com.airsofka.user.values.objects.*;
+
+import java.util.List;
 
 public class ReservationHandler extends DomainActionsContainer {
     public ReservationHandler(Reservation reservation) {
@@ -81,6 +86,22 @@ public class ReservationHandler extends DomainActionsContainer {
             );
 
             reservation.getPassengers().add(passenger);
+        });
+        addDomainActions((PassengerListCreated event) -> {
+            List<Passenger> passengers = event.getPassengers().stream()
+                    .map(passenger -> new Passenger(
+                            PassengerId.of(passenger.getId()),
+                            Title.of(passenger.getTitle()),
+                            Name.of(passenger.getName()),
+                            LastName.of(passenger.getLastName()),
+                            PassengerType.of(passenger.getPassengerType()),
+                            SeatId.of(passenger.getSeatId()),
+                            BookingId.of(passenger.getBookingId())
+
+                    ))
+                    .toList();
+            reservation.setPassengers(passengers);
+
         });
     }
 }

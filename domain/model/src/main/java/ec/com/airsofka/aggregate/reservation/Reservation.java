@@ -1,10 +1,7 @@
 package ec.com.airsofka.aggregate.reservation;
 
 
-import ec.com.airsofka.aggregate.reservation.events.BillingCreated;
-import ec.com.airsofka.aggregate.reservation.events.BookingCreated;
-import ec.com.airsofka.aggregate.reservation.events.ContactCreated;
-import ec.com.airsofka.aggregate.reservation.events.PassengerCreated;
+import ec.com.airsofka.aggregate.reservation.events.*;
 import ec.com.airsofka.aggregate.reservation.values.ReservationId;
 import ec.com.airsofka.billing.Billing;
 import ec.com.airsofka.billing.values.BillingId;
@@ -78,18 +75,13 @@ public class Reservation extends AggregateRoot<ReservationId> {
         ).apply();
     }
 
-    public void createPassengers(String bookingId, List<PassengerCreatedDTO> passengers) {
-        passengers.forEach(passenger ->
-                addEvent(new PassengerCreated(
-                                new PassengerId().getValue(),
-                                passenger.getTitle(),
-                                passenger.getName(),
-                                passenger.getLastName(),
-                                passenger.getPassengerType(),
-                                passenger.getSeatId(),
-                                bookingId
+    public void createPassengers(List<PassengerCreatedDTO> passengers) {
+
+                addEvent(new PassengerListCreated(
+                                new PassengerListId().getValue(),
+                                passengers
                         )
-                ).apply());
+                ).apply();
     }
 
 

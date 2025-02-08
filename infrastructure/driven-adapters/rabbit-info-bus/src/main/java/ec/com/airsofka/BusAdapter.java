@@ -3,6 +3,7 @@ package ec.com.airsofka;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
 import ec.com.airsofka.config.RabbitProperties;
 import ec.com.airsofka.gateway.BusEvent;
+import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class BusAdapter implements BusEvent {
     }
 
     @Override
-    public void sendEmailNotification(Mono<DomainEvent> event) {
+    public void sendEmailNotification(Mono<EmailData> event) {
         event.subscribe(
                 domainEvent -> rabbitTemplate.convertAndSend(
                         envProperties.getEmailExchange(), envProperties.getEmailRoutingKey(),

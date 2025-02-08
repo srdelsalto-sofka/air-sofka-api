@@ -1,22 +1,43 @@
-package ec.com.airsofka.booking.commands;
+package ec.com.airsofka.dto;
 
-import ec.com.airsofka.generics.utils.Command;
+import ec.com.airsofka.booking.commands.CreatePassengerCommand;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class CreateBookingCommand  extends Command {
+public class BookingCreateDTO {
+    @NotBlank(message = "Booking Status cannot be blank")
     private final String bookingStatus;
+
+    @Positive(message = "bookingPrice must be greater than 0")
     private final BigDecimal bookingPrice;
+
+    @PositiveOrZero(message = "Discount must be 0 or greater")
     private final BigDecimal discount;
+
+    @NotBlank(message = "FlightId cannot be blank")
     private final String flightId;
+
+    @NotBlank(message = "UserId cannot be blank")
     private final String userId;
 
+    @NotBlank(message = "Payment method cannot be blank")
     private  final String paymentMethod;
 
+    @NotBlank(message = "Email cannot be blank")
     private final String email;
+
+    @NotBlank(message = "Prefix cannot be blank")
     private final String prefix;
+
+    @NotBlank(message = "Phone number cannot be blank")
     private final String phoneNumber;
+
+    @NotNull(message = "passengers cannot be null")
     private final List<CreatePassengerCommand> passengers;
 
     private final String departureCity;
@@ -31,8 +52,7 @@ public class CreateBookingCommand  extends Command {
     private final BigDecimal ticketPrice;
     private final String keyNotes;
 
-    public CreateBookingCommand(String aggregateId, String bookingStatus, BigDecimal bookingPrice, BigDecimal discount, String flightId, String userId, String paymentMethod, String email, String prefix, String phoneNumber, List<CreatePassengerCommand> passengers, String departureCity, String arrivalCity, String departureDate, String arrivalDate, BigDecimal airportTax, BigDecimal additionalCharges, BigDecimal fuelInsurance, BigDecimal bookingFee, BigDecimal totalAmount, BigDecimal ticketPrice, String keyNotes) {
-        super(aggregateId);
+    public BookingCreateDTO(String bookingStatus, BigDecimal bookingPrice, BigDecimal discount, String flightId, String userId, String paymentMethod, String email, String prefix, String phoneNumber, List<CreatePassengerCommand> passengers, String departureCity, String arrivalCity, String departureDate, String arrivalDate, BigDecimal airportTax, BigDecimal additionalCharges, BigDecimal fuelInsurance, BigDecimal bookingFee, BigDecimal totalAmount, BigDecimal ticketPrice, String keyNotes) {
         this.bookingStatus = bookingStatus;
         this.bookingPrice = bookingPrice;
         this.discount = discount;
@@ -91,6 +111,7 @@ public class CreateBookingCommand  extends Command {
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
     public List<CreatePassengerCommand> getPassengers() {
         return passengers;
     }

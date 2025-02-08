@@ -6,8 +6,10 @@ import ec.com.airsofka.booking.commands.CreateBookingCommand;
 import ec.com.airsofka.booking.queries.responses.BookingResponse;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
+import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.passenger.PassengerCreatedDTO;
+import ec.com.airsofka.passenger.values.PassengerId;
 import ec.com.airsofka.user.queries.query.GetByElementQuery;
 import ec.com.airsofka.user.queries.usecases.FrequentUserUseCase;
 import org.springframework.stereotype.Service;
@@ -30,14 +32,6 @@ public class CreateBookingUseCase implements IUseCaseExecute<CreateBookingComman
     public Mono<BookingResponse> execute(CreateBookingCommand cmd) {
         Reservation reservation = new Reservation();
 
-        List<PassengerCreatedDTO> passengers =  cmd.getPassengers().stream()
-                .map(command -> new PassengerCreatedDTO(
-                        command.getPassengerTitle(),
-                        command.getPassengerName(),
-                        command.getPassengerLastName(),
-                        command.getPassengerType(),
-                        command.getSeatId()
-                )).toList();
 
         reservation.createBooking(cmd.getBookingStatus(),
                 cmd.getBookingPrice(),
@@ -53,6 +47,16 @@ public class CreateBookingUseCase implements IUseCaseExecute<CreateBookingComman
 
         String bookingId = reservation.getBooking().getId().getValue();
 
+        List<PassengerCreatedDTO> passengers = cmd.getPassengers().stream()
+                .map(command -> new PassengerCreatedDTO(
+                        command.getPassengerTitle(),
+                        command.getPassengerName(),
+                        command.getPassengerLastName(),
+                        command.getPassengerType(),
+                        command.getSeatId(),
+                        bookingId
+                )).toList();
+
         reservation.createBilling(bookingId, cmd.getPaymentMethod(), cmd.getBookingPrice());
         reservation.getUncommittedEvents()
                 .stream()
@@ -67,13 +71,45 @@ public class CreateBookingUseCase implements IUseCaseExecute<CreateBookingComman
                 .forEach(busEvent::sendEventContactCreated);
         reservation.markEventsAsCommitted();
 
-        reservation.createPassengers(bookingId, passengers);
+        reservation.createPassengers(passengers);
+
         reservation.getUncommittedEvents()
                 .stream()
                 .map(repository::save)
                 .forEach(busEvent::sendEventPassengerCreated);
 
         reservation.markEventsAsCommitted();
-        return Mono.just(new BookingResponse(reservation.getId().getValue()));
+
+        busEvent.sendEmailNotification(
+                Mono.just(
+                        new EmailData(
+                                cmd.getEmail(),
+                                cmd.getPrefix()  +" "+ cmd.getPhoneNumber(),
+                                cmd.getPassengers().get(0).getPassengerName(),
+                                cmd.getDepartureCity(),
+                                cmd.getArrivalCity(),
+                                cmd.getDepartureDate(),
+                                cmd.getArrivalDate(),
+                                cmd.getTicketPrice(),
+                                cmd.getAirportTax(),
+                                cmd.getAdditionalCharges(),
+                                cmd.getFuelInsurance(),
+                                cmd.getBookingFee(),
+                                cmd.getTotalAmount(),
+                                cmd.getKeyNotes(),
+                                cmd.getPassengers()
+
+
+                        )
+                )
+        );
+
+        return Mono.just(new BookingResponse(
+                        "RESERVATION CONFIRMED",
+                        reservation.getContact().getEmail().getValue(),
+                        reservation.getContact().getPhone().getValue(),
+                        reservation.getBilling().getTotalPrice().getValue()
+                )
+        );
     }
 }
