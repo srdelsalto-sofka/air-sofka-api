@@ -89,6 +89,42 @@ public class RabbitProperties {
     @Value("${seatCreated.routing.key}")
     private String seatCreatedRoutingKey;
 
+    @Value("${email.exchange.name}")
+    private String emailExchange;
+
+    @Value("${email.queue.name}")
+    private String emailQueue;
+
+    @Value("${email.routing.key}")
+    private String emailRoutingKey;
+
+    @Value("${contact.exchange.name}")
+    private String contactExchange;
+
+    @Value("${contact.queue.name}")
+    private String contactQueue;
+
+    @Value("${contact.routing.key}")
+    private String contactRoutingKey;
+
+    @Value("${billing.exchange.name}")
+    private String billingExchange;
+
+    @Value("${billing.queue.name}")
+    private String billingQueue;
+
+    @Value("${billing.routing.key}")
+    private String billingRoutingKey;
+
+    @Value("${passenger.exchange.name}")
+    private String passengerExchange;
+
+    @Value("${passenger.queue.name}")
+    private String passengerQueue;
+
+    @Value("${passenger.routing.key}")
+    private String passengerRoutingKey;
+
     public String getBookingExchange() {
         return bookingExchange;
     }
@@ -136,6 +172,18 @@ public class RabbitProperties {
 
     public String getUserUpdatedRoutingKey() {
         return userUpdatedRoutingKey;
+    }
+
+    public String getEmailExchange() {
+        return emailExchange;
+    }
+
+    public String getEmailQueue() {
+        return emailQueue;
+    }
+
+    public String getEmailRoutingKey() {
+        return emailRoutingKey;
     }
 
     public String getPlaneCreatedExchange() {
@@ -192,8 +240,49 @@ public class RabbitProperties {
         return seatCreatedRoutingKey;
     }
 
+    public String getPassengerRoutingKey() {
+        return passengerRoutingKey;
+    }
+
+    public String getPassengerQueue() {
+        return passengerQueue;
+    }
+
+    public String getPassengerExchange() {
+        return passengerExchange;
+    }
+
+    public String getBillingRoutingKey() {
+        return billingRoutingKey;
+    }
+
+    public String getBillingQueue() {
+        return billingQueue;
+    }
+
+    public String getBillingExchange() {
+        return billingExchange;
+    }
+
+    public String getContactRoutingKey() {
+        return contactRoutingKey;
+    }
+
+    public String getContactQueue() {
+        return contactQueue;
+    }
+
+    public String getContactExchange() {
+        return contactExchange;
+    }
+
     public String[] getAllQueues() {
         return new String[]{getBookingQueue(), getFlightCreatedQueue(), getUserCreatedQueue(), getPlaneCreatedQueue(), getUserUpdatedQueue(),
-                getSeatReservedQueue(), getMaintenanceQueue()};
+                getSeatReservedQueue(), getMaintenanceQueue(),
+
+                getEmailQueue(),
+                getBillingQueue(),
+                getContactQueue(),
+                getPassengerQueue()};
     }
 }

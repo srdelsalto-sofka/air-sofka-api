@@ -3,6 +3,7 @@ package ec.com.airsofka;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
 import ec.com.airsofka.config.RabbitProperties;
 import ec.com.airsofka.gateway.BusEvent;
+import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,15 @@ public class BusAdapter implements BusEvent {
                         domainEvent)
         );
 
+    }
+
+    @Override
+    public void sendEmailNotification(Mono<EmailData> event) {
+        event.subscribe(
+                domainEvent -> rabbitTemplate.convertAndSend(
+                        envProperties.getEmailExchange(), envProperties.getEmailRoutingKey(),
+                        domainEvent)
+        );
     }
 
     public void sendEventUserCreated(Mono<DomainEvent> event) {
@@ -97,6 +107,39 @@ public class BusAdapter implements BusEvent {
                     );
                 }
         );
+    }
+
+    @Override
+    public void sendEventBillingCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent-> rabbitTemplate.convertAndSend(
+                        envProperties.getBillingExchange(),envProperties.getBillingRoutingKey(),
+                        domainEvent
+                )
+        );
+
+    }
+
+    @Override
+    public void sendEventContactCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent-> rabbitTemplate.convertAndSend(
+                        envProperties.getContactExchange(),envProperties.getContactRoutingKey(),
+                        domainEvent
+                )
+        );
+
+    }
+
+    @Override
+    public void sendEventPassengerCreated(Mono<DomainEvent> event) {
+        event.subscribe(
+                domainEvent-> rabbitTemplate.convertAndSend(
+                        envProperties.getPassengerExchange(),envProperties.getPassengerRoutingKey(),
+                        domainEvent
+                )
+        );
+
     }
 
 }
