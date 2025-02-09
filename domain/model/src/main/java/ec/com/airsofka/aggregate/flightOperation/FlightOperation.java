@@ -1,9 +1,6 @@
 package ec.com.airsofka.aggregate.flightOperation;
 
-import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
-import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
-import ec.com.airsofka.aggregate.flightOperation.events.SeatListId;
-import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
+import ec.com.airsofka.aggregate.flightOperation.events.*;
 import ec.com.airsofka.aggregate.flightOperation.values.FlightOperationId;
 import ec.com.airsofka.flight.Flight;
 import ec.com.airsofka.flight.values.FlightId;
@@ -45,6 +42,10 @@ public class FlightOperation extends AggregateRoot<FlightOperationId> {
 
     public void createFlight(String origin, String destination, LocalDateTime departure, LocalDateTime arrival, Double price, String idPlane) {
         addEvent(new FlightCreated(new FlightId().getValue(), origin, destination, departure, arrival, price, idPlane)).apply();
+    }
+
+    public void updateFlight(String id, String origin, String destination, LocalDateTime departure, LocalDateTime arrival, Double price, String idPlane) {
+        addEvent(new FlightUpdated(id, origin, destination, departure, arrival, price, idPlane)).apply();
     }
 
     public List<Seat> getSeatList(){return seatList;}

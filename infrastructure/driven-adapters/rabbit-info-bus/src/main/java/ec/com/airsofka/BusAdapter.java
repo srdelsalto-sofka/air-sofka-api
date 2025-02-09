@@ -27,6 +27,13 @@ public class BusAdapter implements BusEvent {
     }
 
     @Override
+    public void sendEventFlightUpdated(Mono<DomainEvent> event) {
+        event.subscribe(domainEvent -> {
+            rabbitTemplate.convertAndSend(envProperties.getFli);
+        })
+    }
+
+    @Override
     public void sendEventBookingCreated(Mono<DomainEvent> event) {
         event.subscribe(
                 domainEvent -> rabbitTemplate.convertAndSend(

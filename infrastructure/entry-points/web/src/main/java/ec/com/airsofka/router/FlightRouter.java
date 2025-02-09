@@ -23,6 +23,7 @@ public class FlightRouter {
     public RouterFunction<ServerResponse> flightRoutes() {
         return RouterFunctions
                 .route(RequestPredicates.POST("/flights").and(accept(MediaType.APPLICATION_JSON)), flightHandler::create)
-                .andRoute(RequestPredicates.GET("/flights"), flightHandler::getAll);
+                .andRoute(RequestPredicates.GET("/flights"), flightHandler::getAll)
+                .andRoute(RequestPredicates.POST("/flights/{id}").and(accept(MediaType.APPLICATION_JSON)), flightHandler::update);
     }
 }

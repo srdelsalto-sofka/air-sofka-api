@@ -2,7 +2,7 @@ package ec.com.airsofka.adapter;
 
 import ec.com.airsofka.data.FlightEntity;
 import ec.com.airsofka.database.airsofka.FlightMongoRepository;
-import ec.com.airsofka.gateway.FlightRepository;
+import ec.com.airsofka.gateway.IFlightRepository;
 import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.mapper.FlightMapperEntity;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,7 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class FlightMongoAdapter implements FlightRepository {
+public class FlightMongoAdapter implements IFlightRepository {
 
     private final FlightMongoRepository repository;
     private final ReactiveMongoTemplate airMongoTemplate;
