@@ -7,20 +7,20 @@ import ec.com.airsofka.generics.utils.Query;
 import java.util.List;
 
 public class GetAmountsQuery extends Query {
+    private final String userId;
     private final List<PassengerDTO> passengers;
-    private final boolean isFrequent;
 
-    public GetAmountsQuery(List<PassengerDTO> passengers, boolean isFrequent) {
+    public GetAmountsQuery(List<PassengerDTO> passengers, String userId) {
         super(null);
         this.passengers = passengers;
-        this.isFrequent = isFrequent;
+        this.userId = userId;
     }
 
     public List<PassengerDTO> getPassengers() {
         return passengers;
     }
 
-    public boolean isFrequent() {
-        return isFrequent;
+    public String getUserId() {
+        return userId;
     }
 }
