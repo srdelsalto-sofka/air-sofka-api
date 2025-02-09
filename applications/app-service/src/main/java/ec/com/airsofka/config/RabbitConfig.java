@@ -107,7 +107,6 @@ public class RabbitConfig {
 
     @Bean
     public TopicExchange maintenanceExchange() {
-        System.out.println(envProperties.getMaintenanceExchange());
         return new TopicExchange(envProperties.getMaintenanceExchange(), true, false);
     }
 
