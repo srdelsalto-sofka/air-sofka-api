@@ -3,6 +3,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation project(':model')
+    implementation project(':app-exception')
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'

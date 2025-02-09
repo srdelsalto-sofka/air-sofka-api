@@ -1,6 +1,7 @@
 package ec.com.airsofka.user.commands.usecases;
 
 import ec.com.airsofka.aggregate.auth.Auth;
+import ec.com.airsofka.exceptions.EmailAlreadyExistsException;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
 import ec.com.airsofka.gateway.IUserRepository;
@@ -29,13 +30,8 @@ public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, Use
 
     private Mono<String> validateEmailNotExists(String email) {
         return userRepository.findByEmail(email)
-                .hasElement()
-                .flatMap(exists -> {
-                    if (exists) {
-                        return Mono.error(new IllegalArgumentException("El email ya existe en la base de datos"));
-                    }
-                    return Mono.just(email);
-                });
+                .<String>flatMap(user -> Mono.error(new EmailAlreadyExistsException("El email ya existe en la base de datos")))
+                .switchIfEmpty(Mono.just(email));
     }
 
     @Override

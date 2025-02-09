@@ -2,8 +2,7 @@ package ec.com.airsofka.handler;
 
 import ec.com.airsofka.user.commands.CreateUserCommand;
 import ec.com.airsofka.user.commands.usecases.CreateUserUsecase;
-import ec.com.airsofka.validator.EmailAlreadyExistsException;
-import org.springframework.http.HttpStatus;
+import ec.com.airsofka.exceptions.EmailAlreadyExistsException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
