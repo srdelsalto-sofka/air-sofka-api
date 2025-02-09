@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-public class GetSeatsByFlightIdUseCase implements IUseCaseGetBy<String, SeatResponse> {
+public class GetSeatsByFlightIdViewUseCase implements IUseCaseGetBy<String, SeatResponse> {
     private final SeatRepository seatRepository;
 
-    public GetSeatsByFlightIdUseCase(SeatRepository seatRepository) {
+    public GetSeatsByFlightIdViewUseCase(SeatRepository seatRepository) {
         this.seatRepository = seatRepository;
     }
 

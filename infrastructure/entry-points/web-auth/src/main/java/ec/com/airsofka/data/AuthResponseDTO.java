@@ -6,11 +6,19 @@ public class AuthResponseDTO implements Serializable {
     private String email;
     private String role;
     private String token;
+    private String id;
 
     public AuthResponseDTO(String email, String role, String token) {
         this.email = email;
         this.role = role;
         this.token = token;
+    }
+
+    public AuthResponseDTO(String email, String role, String token, String id) {
+        this.email = email;
+        this.role = role;
+        this.token = token;
+        this.id = id;
     }
 
     public AuthResponseDTO() {
@@ -40,4 +48,7 @@ public class AuthResponseDTO implements Serializable {
         this.token = token;
     }
 
+    public String getId() {
+        return id;
+    }
 }

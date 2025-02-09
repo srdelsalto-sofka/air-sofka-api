@@ -7,5 +7,5 @@ public interface IUserRepository {
     Mono<UserDTO> save(UserDTO usertDTO);
     Mono<UserDTO> findById(String id);
     Mono<UserDTO> update(UserDTO usertDTO);
-
+    Mono<UserDTO> findByEmail(String email);
 }
