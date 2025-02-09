@@ -32,4 +32,9 @@ public class PlaneMongoAdapter implements PlaneRepository {
     public Flux<PlaneDTO> getAll() {
         return repository.findAll().map(PlaneMapperEntity::fromEntity);
     }
+
+    @Override
+    public Mono<PlaneDTO> getById(String id) {
+        return repository.findById(id).map(PlaneMapperEntity::fromEntity);
+    }
 }

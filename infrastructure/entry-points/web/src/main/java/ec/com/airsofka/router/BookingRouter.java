@@ -23,7 +23,8 @@ public class BookingRouter {
     @Bean
     public RouterFunction<ServerResponse> bookingRoutes() {
         return RouterFunctions
-                .route(RequestPredicates.POST("/booking").and(accept(MediaType.APPLICATION_JSON)), bookingHandler::create);
+                .route(RequestPredicates.POST("/booking").and(accept(MediaType.APPLICATION_JSON)), bookingHandler::create)
+                .andRoute(RequestPredicates.POST("/booking/cost").and(accept(MediaType.APPLICATION_JSON)), bookingHandler::getCostBreakdown);
     }
 }
 

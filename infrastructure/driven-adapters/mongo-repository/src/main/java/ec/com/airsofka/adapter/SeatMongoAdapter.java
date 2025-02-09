@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
+
 @Repository
 public class SeatMongoAdapter implements SeatRepository {
 
@@ -36,6 +38,14 @@ public class SeatMongoAdapter implements SeatRepository {
 
     @Override
     public Flux<SeatDTO> getAllByFlightId(String id) {
-        return repository.findAllByIdFlight(id).map(SeatMapperEntity::fromEntity);
+        return repository.findAllByIdFlight(id)
+                .sort(Comparator.comparing(SeatEntity::getRow)
+                        .thenComparing(SeatEntity::getColumn))
+                .map(SeatMapperEntity::fromEntity);
+    }
+
+    @Override
+    public Mono<SeatDTO> getById(String id) {
+        return repository.findById(id).map(SeatMapperEntity::fromEntity);
     }
 }

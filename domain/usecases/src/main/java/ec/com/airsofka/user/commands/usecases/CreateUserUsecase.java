@@ -8,6 +8,7 @@ import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.user.User;
 import ec.com.airsofka.user.commands.CreateUserCommand;
 import ec.com.airsofka.user.queries.responses.UserResponse;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 @Service
@@ -15,11 +16,13 @@ public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, Use
 
     private final IEventStore eventRepository;
     private final IUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final BusEvent busEvent;
 
-    public CreateUserUsecase(IEventStore eventRepository, IUserRepository userRepository, BusEvent busEvent) {
+    public CreateUserUsecase(IEventStore eventRepository, IUserRepository userRepository, PasswordEncoder passwordEncoder, BusEvent busEvent) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.busEvent = busEvent;
     }
 
@@ -53,7 +56,7 @@ public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, Use
                 cmd.getLastLastName(),
                 cmd.getName(),
                 cmd.getNumberOfFlights(),
-                cmd.getPassword(),
+                passwordEncoder.encode(cmd.getPassword()),
                 cmd.getPhone(),
                 cmd.getPrefix(),
                 cmd.getRole(),

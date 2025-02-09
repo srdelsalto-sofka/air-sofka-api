@@ -4,7 +4,7 @@ import ec.com.airsofka.generics.utils.QueryResponse;
 import ec.com.airsofka.plane.commands.CreatePlaneCommand;
 import ec.com.airsofka.plane.commands.usecases.CreatePlaneUseCase;
 import ec.com.airsofka.plane.queries.usecases.GetAllPlaneVIewUseCase;
-import ec.com.airsofka.validator.RequestValidator;
+import ec.com.airsofka.validator.RequestValidatorShared;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,11 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class PlaneHandler {
-    private final RequestValidator requestValidator;
+    private final RequestValidatorShared requestValidator;
     private final CreatePlaneUseCase createPlaneUseCase;
     private final GetAllPlaneVIewUseCase getAllPlaneVIewUseCase;
 
-    public PlaneHandler(RequestValidator requestValidator, CreatePlaneUseCase createPlaneUseCase, GetAllPlaneVIewUseCase getAllPlaneVIewUseCase) {
+    public PlaneHandler(RequestValidatorShared requestValidator, CreatePlaneUseCase createPlaneUseCase, GetAllPlaneVIewUseCase getAllPlaneVIewUseCase) {
         this.requestValidator = requestValidator;
         this.createPlaneUseCase = createPlaneUseCase;
         this.getAllPlaneVIewUseCase = getAllPlaneVIewUseCase;
