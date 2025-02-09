@@ -2,6 +2,7 @@ package ec.com.airsofka.handler;
 
 import ec.com.airsofka.user.commands.CreateUserCommand;
 import ec.com.airsofka.user.commands.usecases.CreateUserUsecase;
+import ec.com.airsofka.validator.EmailAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -21,13 +22,34 @@ public class UserHandler {
     public Mono<ServerResponse> create(ServerRequest request) {
         return request.bodyToMono(CreateUserCommand.class)
                 .flatMap(createUserUsecase::execute)
-                .flatMap(userResponse ->
-                        ServerResponse
-                                .status(HttpStatus.CREATED)
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user))
+                .onErrorResume(EmailAlreadyExistsException.class, e ->
+                        ServerResponse.badRequest()
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(userResponse)
+                                .bodyValue(new ErrorResponse(e.getMessage()))
                 );
+    }
+
+    public class ErrorResponse {
+        private String message;
+
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+
+        // Getters y setters
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
 
 }
+
+

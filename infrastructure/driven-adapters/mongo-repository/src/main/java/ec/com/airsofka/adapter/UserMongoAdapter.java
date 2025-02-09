@@ -33,6 +33,11 @@ public class UserMongoAdapter  implements IUserRepository {
         return userMongoRepository.save(userEntity).map(UserMapperEntity::fromEntity);
     }
 
+    @Override
+    public Mono<UserDTO> findByEmail(String email) {
+        return userMongoRepository.findByEmail(email).map(UserMapperEntity::fromEntity);
+    }
+
 
     @Override
     public Mono<UserDTO> findById(String id) {
