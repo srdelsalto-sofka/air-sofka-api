@@ -49,7 +49,6 @@ public class Auth extends AggregateRoot<AuthId> {
         Auth auth = new Auth(id);
         return events
                 .filter(eventsFilter -> id.equals(eventsFilter.getAggregateRootId()))
-                .doOnNext(events2 -> System.out.println(events2.getEventType()))
                 .flatMap(event -> Mono.fromRunnable(() -> auth.addEvent(event).apply()))
                 .doOnTerminate(auth::markEventsAsCommitted)
                 .then(Mono.just(auth));

@@ -9,23 +9,24 @@ import ec.com.airsofka.gateway.IEventStore;
 import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.passenger.PassengerCreatedDTO;
-import ec.com.airsofka.passenger.values.PassengerId;
-import ec.com.airsofka.user.queries.query.GetByElementQuery;
-import ec.com.airsofka.user.queries.usecases.FrequentUserUseCase;
+import ec.com.airsofka.seat.SeatStatus;
+import ec.com.airsofka.seat.commands.UpdateSeatStatusCommand;
+import ec.com.airsofka.seat.commands.usecases.UpdateSeatStatusUseCase;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CreateBookingUseCase implements IUseCaseExecute<CreateBookingCommand, BookingResponse> {
     private final IEventStore repository;
     private final BusEvent busEvent;
+    private final UpdateSeatStatusUseCase updateSeatStatusUseCase;
 
-    public CreateBookingUseCase(IEventStore repository, BusEvent busEvent) {
+    public CreateBookingUseCase(IEventStore repository, BusEvent busEvent, UpdateSeatStatusUseCase updateSeatStatusUseCase) {
         this.repository = repository;
         this.busEvent = busEvent;
+        this.updateSeatStatusUseCase = updateSeatStatusUseCase;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class CreateBookingUseCase implements IUseCaseExecute<CreateBookingComman
                 Mono.just(
                         new EmailData(
                                 cmd.getEmail(),
-                                cmd.getPrefix()  +" "+ cmd.getPhoneNumber(),
+                                cmd.getPrefix() + " " + cmd.getPhoneNumber(),
                                 cmd.getPassengers().get(0).getPassengerName(),
                                 cmd.getDepartureCity(),
                                 cmd.getArrivalCity(),
@@ -102,6 +103,12 @@ public class CreateBookingUseCase implements IUseCaseExecute<CreateBookingComman
 
                         )
                 )
+        );
+
+        passengers.forEach(passenger ->
+                updateSeatStatusUseCase.execute(
+                        new UpdateSeatStatusCommand(passenger.getSeatId(), SeatStatus.OCCUPIED, cmd.getFlightId())
+                ).subscribe()
         );
 
         return Mono.just(new BookingResponse(
