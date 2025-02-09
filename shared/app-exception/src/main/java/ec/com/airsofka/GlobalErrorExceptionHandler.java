@@ -29,20 +29,21 @@ public class GlobalErrorExceptionHandler implements ErrorWebExceptionHandler {
         this.objectMapper = objectMapper;
     }
 
-    private static final Map<Class<? extends Throwable>, Function<Throwable, ErrorDetails>> exceptionHandlers = Map.of(
-            EmptyCollectionException.class, ex -> new ErrorDetails(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new Date()),
-            ConflictException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date()),
-            TransactionRejectedException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date()),
-            RecordNotFoundException.class, ex -> new ErrorDetails(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new Date()),
-            InvalidFieldException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date()),
-            ExpiredJwtException.class, ex -> new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), new Date()),
-            UsernameNotFoundException.class, ex -> new ErrorDetails(HttpStatus.FORBIDDEN.value(), ex.getMessage(), new Date()),
-            RequestValidationException.class, ex -> {
+    private static final Map<Class<? extends Throwable>, Function<Throwable, ErrorDetails>> exceptionHandlers = Map.ofEntries(
+            Map.entry(EmptyCollectionException.class, ex -> new ErrorDetails(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new Date())),
+            Map.entry(ConflictException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date())),
+            Map.entry(TransactionRejectedException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date())),
+            Map.entry(RecordNotFoundException.class, ex -> new ErrorDetails(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new Date())),
+            Map.entry(InvalidFieldException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date())),
+            Map.entry(ExpiredJwtException.class, ex -> new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), new Date())),
+            Map.entry(UsernameNotFoundException.class, ex -> new ErrorDetails(HttpStatus.FORBIDDEN.value(), ex.getMessage(), new Date())),
+            Map.entry(EmailAlreadyExistsException.class, ex -> new ErrorDetails(HttpStatus.CONFLICT.value(), ex.getMessage(), new Date())),
+            Map.entry(RequestValidationException.class, ex -> {
                 List<String> errors = ((RequestValidationException) ex).getErrors();
                 return new ErrorDetails(HttpStatus.UNPROCESSABLE_ENTITY.value(), String.join(", ", errors), new Date());
-            },
-            BadCredentialsException.class, ex -> new ErrorDetails(HttpStatus.FORBIDDEN.value(), ex.getMessage(), new Date()),
-            InternalServerException.class, ex -> new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred.",new Date())
+            }),
+            Map.entry(BadCredentialsException.class, ex -> new ErrorDetails(HttpStatus.FORBIDDEN.value(), ex.getMessage(), new Date())),
+            Map.entry(InternalServerException.class, ex -> new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred.", new Date()))
     );
 
     @Override
