@@ -7,14 +7,21 @@ import ec.com.airsofka.seat.SeatStatus;
 import java.math.BigDecimal;
 
 public class UpdateSeatStatusCommand extends Command {
-    private final String seatId;
-    private final String number;
-    private final Integer row;
-    private final String column;
-    private final SeatClass type;
-    private final SeatStatus status;
-    private final BigDecimal price;
-    private final String idFlight;
+    private String seatId;
+    private String number;
+    private Integer row;
+    private String column;
+    private SeatClass type;
+    private SeatStatus status;
+    private BigDecimal price;
+    private String idFlight;
+
+    public UpdateSeatStatusCommand(String seatId, SeatStatus status, String idFlight) {
+        super(null);
+        this.seatId = seatId;
+        this.status = status;
+        this.idFlight = idFlight;
+    }
 
     public UpdateSeatStatusCommand(String seatId, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
         super(null);

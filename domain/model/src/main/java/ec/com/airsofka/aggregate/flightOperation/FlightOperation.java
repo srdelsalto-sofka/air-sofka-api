@@ -56,8 +56,8 @@ public class FlightOperation extends AggregateRoot<FlightOperationId> {
     }
 
             /*Actualiza la lista de asientos. Funciona como un update */
-    public void createSeatReservation(String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
-        addEvent(new SeatReserved(new SeatId().getValue(), number, row, column, type, status, price, idFlight)).apply();
+    public void createSeatReservation(String id, String number, Integer row, String column, SeatClass type, SeatStatus status, BigDecimal price, String idFlight) {
+        addEvent(new SeatReserved(id, number, row, column, type, status, price, idFlight)).apply();
     }
 
 
