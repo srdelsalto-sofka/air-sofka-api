@@ -117,12 +117,10 @@
     <table>
         <tr>
             <th>Class</th>
-            <th>Seat</th>
             <th style="text-align: right;">Passenger</th>
         </tr>
         <tr th:each="seat : ${seats}">
             <td th:text="${seat.flightClass}">Premium Economy</td>
-            <td th:text="${seat.seatNumber}">5B</td>
             <td style="text-align: right;" th:text="${seat.passengerName}">John Doe</td>
         </tr>
     </table>
