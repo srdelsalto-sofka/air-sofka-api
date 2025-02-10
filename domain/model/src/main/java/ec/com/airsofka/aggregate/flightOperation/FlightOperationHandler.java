@@ -52,7 +52,7 @@ public class FlightOperationHandler extends DomainActionsContainer {
         addDomainActions((SeatListCreated event) -> {
             List<Seat> seatList = event.getSeats().stream()
                     .map(seats -> new Seat(
-                            new SeatId(), Number.of(seats.getNumber()), Row.of(seats.getRow()),
+                            SeatId.of(seats.getId()), Number.of(seats.getNumber()), Row.of(seats.getRow()),
                             Column.of(seats.getColumn()), Type.of(seats.getType()), Status.of(seats.getStatus()),
                             ec.com.airsofka.seat.values.objects.Price.of(seats.getPrice()), FlightId.of(seats.getIdFlight())
                     ))
