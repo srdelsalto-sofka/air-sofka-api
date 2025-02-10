@@ -144,6 +144,8 @@ public class BusListener implements BusEventListener {
                 flight.getIdPlane()
         );
 
+        System.out.println("Flight updated");
+
         flightUpdateViewUseCase.accept(flightDTO);
     }
 
