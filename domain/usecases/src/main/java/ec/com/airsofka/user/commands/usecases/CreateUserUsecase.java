@@ -1,8 +1,10 @@
 package ec.com.airsofka.user.commands.usecases;
 
 import ec.com.airsofka.aggregate.auth.Auth;
+import ec.com.airsofka.exceptions.EmailAlreadyExistsException;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
+import ec.com.airsofka.gateway.IUserRepository;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.user.User;
 import ec.com.airsofka.user.commands.CreateUserCommand;
@@ -14,22 +16,34 @@ import reactor.core.publisher.Mono;
 public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, UserResponse>{
 
     private final IEventStore eventRepository;
+    private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final BusEvent busEvent;
 
-    public CreateUserUsecase(IEventStore eventRepository, PasswordEncoder passwordEncoder, BusEvent busEvent) {
+    public CreateUserUsecase(IEventStore eventRepository, IUserRepository userRepository, PasswordEncoder passwordEncoder, BusEvent busEvent) {
         this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.busEvent = busEvent;
     }
 
 
+    private Mono<String> validateEmailNotExists(String email) {
+        return userRepository.findByEmail(email)
+                .<String>flatMap(user -> Mono.error(new EmailAlreadyExistsException("El email ya existe en la base de datos")))
+                .switchIfEmpty(Mono.just(email));
+    }
+
     @Override
     public Mono<UserResponse> execute(CreateUserCommand cmd) {
+        return validateEmailNotExists(cmd.getEmail())
+                .flatMap(valid -> createUser(cmd));
+    }
 
+    private Mono<UserResponse> createUser(CreateUserCommand cmd) {
         Auth authAggregate = new Auth();
-
-        authAggregate.createUser(cmd.getBirthDate(),
+        authAggregate.createUser(
+                cmd.getBirthDate(),
                 cmd.getDocumentNumber(),
                 cmd.getDocumentType(),
                 cmd.getEmail(),
@@ -42,8 +56,8 @@ public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, Use
                 cmd.getPhone(),
                 cmd.getPrefix(),
                 cmd.getRole(),
-                cmd.getTitle());
-
+                cmd.getTitle()
+        );
 
         authAggregate.getUncommittedEvents()
                 .stream()
@@ -51,7 +65,6 @@ public class CreateUserUsecase implements IUseCaseExecute<CreateUserCommand, Use
                 .forEach(busEvent::sendEventUserCreated);
 
         User newUser = authAggregate.getUser();
-
         authAggregate.markEventsAsCommitted();
 
         return Mono.just(new UserResponse(

@@ -31,6 +31,8 @@ import ec.com.airsofka.passenger.queries.usecases.PassengerSavedViewUseCase;
 import ec.com.airsofka.plane.queries.usecases.PlaneSavedViewUseCase;
 import ec.com.airsofka.seat.SeatCreatedDTO;
 import ec.com.airsofka.seat.queries.usecases.SeatListSavedViewUseCase;
+import ec.com.airsofka.user.queries.query.GetByElementQuery;
+import ec.com.airsofka.user.queries.usecases.FrequentUserUseCase;
 import ec.com.airsofka.user.queries.usecases.UserSavedViewUseCase;
 import ec.com.airsofka.user.queries.usecases.UserUpdatedViewUseCase;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -52,6 +54,7 @@ public class BusListener implements BusEventListener {
     private final BookingSavedViewUseCase bookingSavedViewUseCase;
     private final ContactSavedViewUseCase contactSavedViewUseCase;
     private final PassengerSavedViewUseCase passengerSavedViewUseCase;
+    private final FrequentUserUseCase frequentUserUseCase;
 
     public BusListener(
             RabbitProperties rabbitProperties,
@@ -65,7 +68,8 @@ public class BusListener implements BusEventListener {
             BillingSavedViewUseCase billingSavedViewUseCase,
             BookingSavedViewUseCase bookingSavedViewUseCase,
             ContactSavedViewUseCase contactSavedViewUseCase,
-            PassengerSavedViewUseCase passengerSavedViewUseCase
+            PassengerSavedViewUseCase passengerSavedViewUseCase,
+            FrequentUserUseCase frequentUserUseCase
     ) {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
@@ -79,6 +83,7 @@ public class BusListener implements BusEventListener {
         this.bookingSavedViewUseCase = bookingSavedViewUseCase;
         this.contactSavedViewUseCase = contactSavedViewUseCase;
         this.passengerSavedViewUseCase = passengerSavedViewUseCase;
+        this.frequentUserUseCase = frequentUserUseCase;
     }
 
     @Override
@@ -96,7 +101,9 @@ public class BusListener implements BusEventListener {
         );
         bookingSavedViewUseCase.accept(bookingDTO);
 
-
+        if(bookingDTO.getUserId() != null || !bookingDTO.getUserId().isEmpty()){
+            frequentUserUseCase.accept(new GetByElementQuery(bookingDTO.getUserId()));
+        }
     }
 
     @Override

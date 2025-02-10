@@ -1,6 +1,7 @@
 package ec.com.airsofka.aggregate.flightOperation;
 
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
+import ec.com.airsofka.aggregate.flightOperation.events.FlightUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
 import ec.com.airsofka.flight.Flight;
@@ -34,17 +35,29 @@ public class FlightOperationHandler extends DomainActionsContainer {
             flightOperation.setFlight(flight);
         });
 
+        addDomainActions((FlightUpdated event) -> {
+            Flight flight = new Flight(
+                    FlightId.of(event.getId()),
+                    Origin.of(event.getOrigin()),
+                    Destination.of(event.getDestination()),
+                    Departure.of(event.getDeparture()),
+                    Arrival.of(event.getArrival()),
+                    Price.of(event.getPrice()),
+                    PlaneId.of(event.getIdPlane())
+            );
+
+            flightOperation.setFlight(flight);
+        });
+
         addDomainActions((SeatListCreated event) -> {
             List<Seat> seatList = event.getSeats().stream()
                     .map(seats -> new Seat(
-                            new SeatId(), Number.of(seats.getNumber()), Row.of(seats.getRow()),
+                            SeatId.of(seats.getId()), Number.of(seats.getNumber()), Row.of(seats.getRow()),
                             Column.of(seats.getColumn()), Type.of(seats.getType()), Status.of(seats.getStatus()),
                             ec.com.airsofka.seat.values.objects.Price.of(seats.getPrice()), FlightId.of(seats.getIdFlight())
-
                     ))
                     .toList();
             flightOperation.setSeatList(seatList);
-
         });
 
         addDomainActions((SeatReserved event) -> {

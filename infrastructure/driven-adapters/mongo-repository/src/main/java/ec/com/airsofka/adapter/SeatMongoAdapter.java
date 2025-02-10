@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Comparator;
+
 @Repository
 public class SeatMongoAdapter implements SeatRepository {
 
@@ -41,5 +42,10 @@ public class SeatMongoAdapter implements SeatRepository {
                 .sort(Comparator.comparing(SeatEntity::getRow)
                         .thenComparing(SeatEntity::getColumn))
                 .map(SeatMapperEntity::fromEntity);
+    }
+
+    @Override
+    public Mono<SeatDTO> getById(String id) {
+        return repository.findById(id).map(SeatMapperEntity::fromEntity);
     }
 }

@@ -30,7 +30,7 @@ public class FrequentUserUseCase implements IUseCaseAccept<GetByElementQuery, Vo
     @Override
     public void accept(GetByElementQuery request) {
         userRepository.findById(request.getElement())
-                .switchIfEmpty(Mono.error(new NoSuchElementException("User not found by id")))
+                /*.switchIfEmpty(Mono.error(new NoSuchElementException("User not found by id")))*/
                 .publishOn(Schedulers.boundedElastic())
                 .flatMap(userDTO -> {
                     userDTO.setNumberOfFlights(userDTO.getNumberOfFlights() + 1);

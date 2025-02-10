@@ -1,8 +1,11 @@
 package ec.com.airsofka.seat.commands.usecases;
 
 import ec.com.airsofka.aggregate.flightOperation.FlightOperation;
+import ec.com.airsofka.aggregate.flightOperation.events.EventsFlighOperationEnum;
+import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
 import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
+import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
 import ec.com.airsofka.seat.Seat;
 import ec.com.airsofka.seat.commands.UpdateSeatStatusCommand;
@@ -26,57 +29,53 @@ public class UpdateSeatStatusUseCase implements IUseCaseExecute<UpdateSeatStatus
 
     @Override
     public Mono<SeatResponse> execute(UpdateSeatStatusCommand cmd) {
-        // 1️⃣ Recuperar el FlightOperation desde el repositorio con su historial de eventos
-        return repository.getEventsByAggregateId(cmd.getIdFlight())
-                .collectList()
-                .flatMap(events -> FlightOperation.from(cmd.getIdFlight(), Flux.fromIterable(events)))
-                .flatMap(flightOperation -> {
-                    // 2️⃣ Buscar el asiento a actualizar
-                    List<Seat> seats = flightOperation.getSeatList();
-                    Seat updatedSeat = seats.stream()
-                            .filter(seat -> seat.getId().getValue().equals(cmd.getSeatId()))
-                            .findFirst()
-                            .orElseThrow(() -> new IllegalStateException("Seat not found: " + cmd.getSeatId()));
+        Mono<FlightCreated> flightCreatedEvent = repository.findAllAggregateByEvent("flightOperation", EventsFlighOperationEnum.FLIGHT_CREATED.name())
+                .map(event -> (FlightCreated) event)
+                .filter(event -> event.getId().equals(cmd.getIdFlight()))
+                .single();
 
-                    // 3️⃣ Crear una nueva lista con el asiento actualizado
-                    List<Seat> updatedSeats = seats.stream()
-                            .map(seat -> seat.getId().getValue().equals(cmd.getSeatId())
-                                    ? new Seat(seat.getId(), seat.getNumber(), seat.getRow(), seat.getColumn(),
-                                    seat.getType(), new Status(cmd.getStatus()), seat.getPrice(), seat.getIdFlight())
-                                    : seat)
-                            .toList();
+        return flightCreatedEvent.flatMap(flightCreated -> {
+           Flux<DomainEvent> eventFlights = repository.findAggregate(flightCreated.getAggregateRootId(), "flightOperation");
 
-                    flightOperation.setSeatList(updatedSeats);
+           return FlightOperation.from(flightCreated.getAggregateRootId(), eventFlights)
+                   .flatMap(flightOperation -> {
+                       List<Seat> seats = flightOperation.getSeatList();
 
-                    // 4️⃣ Disparar el evento de SeatReserved para notificar el cambio
-                    flightOperation.createSeatReservation(
-                            updatedSeat.getNumber().getValue(),
-                            updatedSeat.getRow().getValue(),
-                            updatedSeat.getColumn().getValue(),
-                            updatedSeat.getType().getValue(),
-                            cmd.getStatus(),
-                            updatedSeat.getPrice().getValue(),
-                            updatedSeat.getIdFlight().getValue()
-                    );
+                       Seat updatedSeat = seats.stream()
+                               .filter(seat -> {
+                                   return seat.getId().getValue().equals(cmd.getSeatId());
+                               })
+                               .findFirst()
+                               .orElseThrow(() -> new IllegalStateException("Seat not found: " + cmd.getSeatId()));
 
-                    // 5️⃣ Guardar eventos y notificar al bus de eventos
-                    return Flux.fromIterable(flightOperation.getUncommittedEvents())
-                            .flatMap(repository::save) // Guardar cada evento en el EventStore
-                            .doOnNext(event -> busEvent.sendEventSeatReserved(Mono.just(event))) // Enviar eventos al BusEvent
-                            .then(Mono.fromRunnable(flightOperation::markEventsAsCommitted)) // Marcar eventos como comprometidos
-                            .thenReturn(updatedSeat); // Propagar el asiento actualizado
-                })
-                // 6️⃣ Convertir el asiento actualizado en la respuesta esperada
-                .map(updatedSeat -> new SeatResponse(
-                        updatedSeat.getId().getValue(),
-                        updatedSeat.getNumber().getValue(),
-                        updatedSeat.getRow().getValue(),
-                        updatedSeat.getColumn().getValue(),
-                        updatedSeat.getType().getValue(),
-                        updatedSeat.getStatus().getValue(),
-                        updatedSeat.getPrice().getValue(),
-                        updatedSeat.getIdFlight().getValue()
-                ));
+                       flightOperation.createSeatReservation(
+                               updatedSeat.getId().getValue(),
+                               updatedSeat.getNumber().getValue(),
+                               updatedSeat.getRow().getValue(),
+                               updatedSeat.getColumn().getValue(),
+                               updatedSeat.getType().getValue(),
+                               cmd.getStatus(),
+                               updatedSeat.getPrice().getValue(),
+                               updatedSeat.getIdFlight().getValue()
+                       );
+
+                       flightOperation.getUncommittedEvents()
+                               .stream()
+                               .map(repository::save)
+                               .forEach(busEvent::sendEventSeatReserved);
+
+                       return  Mono.just(new SeatResponse(
+                               updatedSeat.getId().getValue(),
+                               updatedSeat.getNumber().getValue(),
+                               updatedSeat.getRow().getValue(),
+                               updatedSeat.getColumn().getValue(),
+                               updatedSeat.getType().getValue(),
+                               updatedSeat.getStatus().getValue(),
+                               updatedSeat.getPrice().getValue(),
+                               updatedSeat.getIdFlight().getValue()
+                       ));
+                   });
+        });
     }
 }
 

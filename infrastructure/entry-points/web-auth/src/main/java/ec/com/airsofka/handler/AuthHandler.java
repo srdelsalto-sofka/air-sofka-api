@@ -46,7 +46,7 @@ public class AuthHandler {
         var extraClaims = extractAuthorities("roles", userDetails);
         UserEntity user =  (UserEntity) userDetails;
         var jwtToken = jwtService.generateToken(userDetails, extraClaims);
-        return new AuthResponseDTO(userDetails.getUsername(), user.getRole().name() ,jwtToken);
+        return new AuthResponseDTO(userDetails.getUsername(), user.getRole().name() ,jwtToken, user.getId());
     }
 
     private Map<String, Object> extractAuthorities(String key, UserDetails userDetails) {
