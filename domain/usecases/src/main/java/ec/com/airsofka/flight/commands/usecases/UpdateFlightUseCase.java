@@ -23,24 +23,24 @@ public class UpdateFlightUseCase implements IUseCaseExecute<UpdateFlightCommand,
 
     @Override
     public Mono<FlightResponse> execute(UpdateFlightCommand cmd) {
-        Mono<FlightCreated> flightCreatedEvent = repository.findAllAggregateByEvent("flightoperation", EventsFlighOperationEnum.FLIGHT_CREATED.name())
+        Mono<FlightCreated> flightCreatedEvent = repository.findAllAggregateByEvent("flightOperation", EventsFlighOperationEnum.FLIGHT_CREATED.name())
                 .map(event -> (FlightCreated) event)
                 .filter(event -> event.getId().equals(cmd.getId()))
                 .single();
 
-        return flightCreatedEvent.flatMap(flightUpdated -> {
-            Flux<DomainEvent> flightEvents = repository.findAggregate(flightUpdated.getAggregateRootId(), "flightoperation");
+        return flightCreatedEvent.flatMap(flightCreated -> {
+            Flux<DomainEvent> flightEvents = repository.findAggregate(flightCreated.getAggregateRootId(), "flightOperation");
 
-            return FlightOperation.from(flightUpdated.getAggregateRootId(), flightEvents)
+            return FlightOperation.from(flightCreated.getAggregateRootId(), flightEvents)
                     .flatMap(flight -> {
                         flight.updateFlight(
-                                flightUpdated.getId(),
-                                flightUpdated.getOrigin(),
-                                flightUpdated.getDestination(),
-                                flightUpdated.getDeparture(),
-                                flightUpdated.getArrival(),
-                                flightUpdated.getPrice(),
-                                flightUpdated.getIdPlane());
+                                flightCreated.getId(),
+                                cmd.getOrigin(),
+                                cmd.getDestination(),
+                                cmd.getDeparture(),
+                                cmd.getArrival(),
+                                cmd.getPrice(),
+                                cmd.getIdPlane());
 
                         // Guardar los eventos no comprometidos de forma reactiva
                         return Flux.fromIterable(flight.getUncommittedEvents())
