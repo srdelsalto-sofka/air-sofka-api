@@ -48,11 +48,11 @@ public class FlightHandler {
                 .flatMap(requestValidator::validate)
                 .map(FlightMapper::toCommand)
                 .flatMap(updateFlightUseCase::execute)
-                .flatMap(flightRespose ->
+                .flatMap(flightResponse ->
                         ServerResponse
                                 .status(HttpStatus.OK)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(flightRespose)
+                                .bodyValue(flightResponse)
                 );
     }
 

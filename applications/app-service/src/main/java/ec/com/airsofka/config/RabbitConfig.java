@@ -55,6 +55,23 @@ public class RabbitConfig {
     }
 
     @Bean
+    public TopicExchange flightUpdatedExchange() {
+        return new TopicExchange(envProperties.getFlightUpdatedExchange(), true, false);
+    }
+
+    @Bean
+    public Queue flightUpdatedQueue() {
+        return new Queue(envProperties.getFlightUpdatedQueue(), true);
+    }
+
+    @Bean
+    public Binding flightUpdatedBinding() {
+        return BindingBuilder.bind(flightUpdatedQueue())
+                .to(flightUpdatedExchange())
+                .with(envProperties.getFlightUpdatedRoutingKey());
+    }
+
+    @Bean
     public TopicExchange userCreatedExchange() {
         return new TopicExchange(envProperties.getUserCreatedExchange(), true, false);
     }
