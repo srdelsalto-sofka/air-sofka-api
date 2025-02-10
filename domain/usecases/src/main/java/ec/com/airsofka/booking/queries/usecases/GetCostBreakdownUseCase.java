@@ -28,10 +28,6 @@ public class GetCostBreakdownUseCase implements IUseCaseGet<GetAmountsQuery, Cos
     private static final BigDecimal ADDITIONAL_CHARGES = BigDecimal.valueOf(25.00);
 
 
-    public Mono<BigDecimal> getSeatPriceById(String seatId) {
-
-        return Mono.just(BigDecimal.valueOf(759.00));
-    }
 
     @Override
     public Mono<QueryResponse<CostBreakdownResponse>> get(GetAmountsQuery request) {

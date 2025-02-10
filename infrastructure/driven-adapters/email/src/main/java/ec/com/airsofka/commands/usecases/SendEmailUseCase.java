@@ -83,7 +83,7 @@ public class SendEmailUseCase implements IUseCaseExecute<SendEmailCommand, Email
         List<SeatRecord> availableSeats = emailData.getPassengers()
                 .stream()
                 .map(passenger  -> new SeatRecord(
-                        "TEST CLASS", passenger.getSeatId(),passenger.getPassengerName()
+                        "ECONOMIC", passenger.getSeatId(),passenger.getPassengerName()
                 ))
                 .toList();
 

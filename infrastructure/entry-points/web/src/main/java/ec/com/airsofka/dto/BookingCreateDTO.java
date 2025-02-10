@@ -22,7 +22,7 @@ public class BookingCreateDTO {
     @NotBlank(message = "FlightId cannot be blank")
     private final String flightId;
 
-    @NotBlank(message = "UserId cannot be blank")
+
     private final String userId;
 
     @NotBlank(message = "Payment method cannot be blank")
