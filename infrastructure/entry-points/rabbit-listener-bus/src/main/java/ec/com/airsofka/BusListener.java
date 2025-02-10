@@ -101,8 +101,8 @@ public class BusListener implements BusEventListener {
         );
         bookingSavedViewUseCase.accept(bookingDTO);
 
-        if(bookingDTO.getUserId() != null || !bookingDTO.getUserId().isEmpty()){
-            frequentUserUseCase.accept(new GetByElementQuery(bookingDTO.getUserId()));
+        if(booking.getUserId() != null && !booking.getUserId().isEmpty()){
+            frequentUserUseCase.accept(new GetByElementQuery(booking.getUserId()));
         }
     }
 
