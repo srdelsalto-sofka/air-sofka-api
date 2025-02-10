@@ -3,7 +3,7 @@ package ec.com.airsofka.adapter;
 import ec.com.airsofka.data.FlightEntity;
 import ec.com.airsofka.database.airsofka.FlightMongoRepository;
 import ec.com.airsofka.flight.queries.query.GetAllFlightQuery;
-import ec.com.airsofka.gateway.IFlightRepository;
+import ec.com.airsofka.gateway.FlightRepository;
 import ec.com.airsofka.gateway.dto.FlightDTO;
 import ec.com.airsofka.mapper.FlightMapperEntity;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +18,7 @@ import java.time.*;
 import java.util.Date;
 
 @Repository
-public class FlightMongoAdapter implements IFlightRepository {
+public class FlightMongoAdapter implements FlightRepository {
 
     private final FlightMongoRepository repository;
     private final ReactiveMongoTemplate airMongoTemplate;

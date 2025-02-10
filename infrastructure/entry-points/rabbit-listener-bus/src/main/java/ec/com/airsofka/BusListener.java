@@ -3,7 +3,6 @@ package ec.com.airsofka;
 import ec.com.airsofka.aggregate.auth.events.UserCreated;
 import ec.com.airsofka.aggregate.auth.events.UserUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.FlightCreated;
-import ec.com.airsofka.aggregate.flightOperation.events.FlightUpdated;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatListCreated;
 import ec.com.airsofka.aggregate.flightOperation.events.SeatReserved;
 import ec.com.airsofka.aggregate.planeManagement.events.MaintenanceCreated;
@@ -17,7 +16,6 @@ import ec.com.airsofka.commands.usecases.SendEmailUseCase;
 import ec.com.airsofka.config.RabbitProperties;
 import ec.com.airsofka.contact.queries.usecases.ContactSavedViewUseCase;
 import ec.com.airsofka.flight.queries.usecases.FlightSavedViewUseCase;
-import ec.com.airsofka.flight.queries.usecases.FlightUpdateViewUseCase;
 import ec.com.airsofka.gateway.BusEventListener;
 import ec.com.airsofka.gateway.data.EmailData;
 import ec.com.airsofka.gateway.dto.FlightDTO;
@@ -47,7 +45,6 @@ public class BusListener implements BusEventListener {
     private final RabbitProperties rabbitProperties;
     private final SendEmailUseCase sendEmailUseCase;
     private final FlightSavedViewUseCase flightSavedViewUseCase;
-    private final FlightUpdateViewUseCase flightUpdateViewUseCase;
     private final UserSavedViewUseCase userSavedViewUseCase;
     private final UserUpdatedViewUseCase userUpdatedViewUseCase;
     private final PlaneSavedViewUseCase planeSavedViewUseCase;
@@ -63,7 +60,6 @@ public class BusListener implements BusEventListener {
             RabbitProperties rabbitProperties,
             SendEmailUseCase sendEmailUseCase,
             FlightSavedViewUseCase flightSavedViewUseCase,
-            FlightUpdateViewUseCase flightUpdateViewUseCase,
             UserSavedViewUseCase userSavedViewUseCase,
             UserUpdatedViewUseCase userUpdatedViewUseCase,
             PlaneSavedViewUseCase planeSavedViewUseCase,
@@ -78,7 +74,6 @@ public class BusListener implements BusEventListener {
         this.rabbitProperties = rabbitProperties;
         this.sendEmailUseCase = sendEmailUseCase;
         this.flightSavedViewUseCase = flightSavedViewUseCase;
-        this.flightUpdateViewUseCase = flightUpdateViewUseCase;
         this.userSavedViewUseCase = userSavedViewUseCase;
         this.userUpdatedViewUseCase = userUpdatedViewUseCase;
         this.planeSavedViewUseCase = planeSavedViewUseCase;
@@ -127,24 +122,6 @@ public class BusListener implements BusEventListener {
         );
 
         flightSavedViewUseCase.accept(flightDTO);
-    }
-
-    @Override
-    @RabbitListener(queues = "#{rabbitProperties.getFlightUpdatedQueue()}")
-    public void receiveFlightUpdated(DomainEvent flightUpdated) {
-        FlightUpdated flight = (FlightUpdated) flightUpdated;
-
-        FlightDTO flightDTO = new FlightDTO(
-                flight.getId(),
-                flight.getOrigin(),
-                flight.getDestination(),
-                flight.getDeparture(),
-                flight.getArrival(),
-                flight.getPrice(),
-                flight.getIdPlane()
-        );
-
-        flightUpdateViewUseCase.accept(flightDTO);
     }
 
     @Override
