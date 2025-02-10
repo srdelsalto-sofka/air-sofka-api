@@ -9,9 +9,11 @@ import ec.com.airsofka.gateway.BusEvent;
 import ec.com.airsofka.gateway.IEventStore;
 import ec.com.airsofka.generics.domain.DomainEvent;
 import ec.com.airsofka.generics.interfaces.IUseCaseExecute;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Service
 public class UpdateFlightUseCase implements IUseCaseExecute<UpdateFlightCommand, FlightResponse> {
     private final IEventStore repository;
     private final BusEvent busEvent;

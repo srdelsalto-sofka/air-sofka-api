@@ -26,13 +26,13 @@ public class RabbitProperties {
     @Value("${flightCreated.routing.key}")
     private String flightCreatedRoutingKey;
 
-    @Value("flightUpdated.exchange.name")
+    @Value("${flightUpdated.exchange.name}")
     private String flightUpdatedExchange;
 
-    @Value("flightUpdated.queue.name")
+    @Value("${flightUpdated.queue.name}")
     private String flightUpdatedQueue;
 
-    @Value("flightUpdated.routing.key")
+    @Value("${flightUpdated.routing.key}")
     private String flightUpdatedRoutingKey;
 
     @Value("${userCreated.exchange.name}")
@@ -298,7 +298,7 @@ public class RabbitProperties {
     }
 
     public String[] getAllQueues() {
-        return new String[]{getBookingQueue(), getFlightCreatedQueue(), getUserCreatedQueue(), getPlaneCreatedQueue(), getUserUpdatedQueue(),
+        return new String[]{getBookingQueue(), getFlightCreatedQueue(), getFlightUpdatedQueue(), getUserCreatedQueue(), getPlaneCreatedQueue(), getUserUpdatedQueue(),
                 getSeatReservedQueue(), getMaintenanceQueue(),
 
                 getEmailQueue(),
