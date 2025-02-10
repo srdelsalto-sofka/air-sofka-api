@@ -6,7 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface BusEvent {
     void sendEventFlightCreated(Mono<DomainEvent> event);
-    void sendEventFlightUpdated(Mono<DomainEvent> event);
 
     void sendEventBookingCreated(Mono<DomainEvent> event);
 

@@ -8,7 +8,6 @@ public interface BusEventListener {
 
     void receiveBookingCreated(DomainEvent emailDetails);
     void receiveFlightCreated(DomainEvent flightCreated);
-    void receiveFlightUpdated(DomainEvent flightUpdated);
     void receivePlaneCreated(DomainEvent planeCreated);
     void receiveSeatReserved(DomainEvent seatListUpdated);
     void receiveUserCreated(DomainEvent userCreated);
